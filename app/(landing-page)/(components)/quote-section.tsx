@@ -25,88 +25,74 @@ export function QuoteSection({
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
-    const quote = quoteRef.current;
-    const author = authorRef.current;
-    if (!section || !quote || !author) return;
+    const quoteElement = quoteRef.current;
+    const authorElement = authorRef.current;
+    if (!section || !quoteElement) return;
 
     let hoverTween: gsap.core.Tween | null = null;
 
     // Set initial states
     gsap.set(section, { opacity: 0, y: 40 });
-    gsap.set(quote, { opacity: 0, y: 20 });
-    gsap.set(author, { opacity: 0, y: 20 });
+    gsap.set(quoteElement, { opacity: 0, y: 20 });
+    if (authorElement) {
+      gsap.set(authorElement, { opacity: 0, y: 20 });
+    }
 
-    // Scroll reveal animation
+    const triggerConfig = {
+      trigger: section,
+      start: "top 80%",
+      toggleActions: "play none none none",
+    };
+
+    // Animate section
     gsap.to(section, {
       opacity: 1,
       y: 0,
       duration: 0.8,
       ease: "power3.out",
-      scrollTrigger: {
-        trigger: section,
-        start: "top center",
-        markers: false,
-      },
+      scrollTrigger: triggerConfig,
     });
 
-    gsap.to(quote, {
+    // Animate quote
+    gsap.to(quoteElement, {
       opacity: 1,
       y: 0,
       duration: 0.6,
       ease: "power2.out",
       delay: 0.1,
-      scrollTrigger: {
-        trigger: section,
-        start: "top center",
-        markers: false,
-      },
+      scrollTrigger: triggerConfig,
     });
 
-    gsap.to(author, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "power2.out",
-      delay: 0.2,
-      scrollTrigger: {
-        trigger: section,
-        start: "top center",
-        markers: false,
-      },
-    });
-
-    // Hover animation
-    const handleMouseEnter = () => {
-      if (hoverTween) hoverTween.kill();
-      hoverTween = gsap.to(section, {
-        y: -8,
-        scale: 1.02,
-        duration: 0.4,
-        ease: "power2.out",
-      });
-      gsap.to(section, {
-        "--shadow-opacity": "0.15",
-        "--border-opacity": "0.2",
-        duration: 0.4,
-        ease: "power2.out",
-      } as gsap.TweenVars);
-    };
-
-    const handleMouseLeave = () => {
-      if (hoverTween) hoverTween.kill();
-      hoverTween = gsap.to(section, {
+    // Animate author
+    if (authorElement) {
+      gsap.to(authorElement, {
+        opacity: 1,
         y: 0,
-        scale: 1,
+        duration: 0.6,
+        ease: "power2.out",
+        delay: 0.2,
+        scrollTrigger: triggerConfig,
+      });
+    }
+
+    const animateHover = (hovered: boolean) => {
+      if (hoverTween) hoverTween.kill();
+      hoverTween = gsap.to(section, {
+        y: hovered ? -8 : 0,
+        scale: hovered ? 1.02 : 1,
         duration: 0.4,
         ease: "power2.out",
       });
       gsap.to(section, {
-        "--shadow-opacity": "0.05",
-        "--border-opacity": "0.1",
+        "--shadow-opacity": hovered ? "0.15" : "0.05",
+        "--border-opacity": hovered ? "0.2" : "0.1",
         duration: 0.4,
         ease: "power2.out",
       } as gsap.TweenVars);
     };
+
+    const handleMouseEnter = () => animateHover(true);
+    const handleMouseLeave = () => animateHover(false);
 
     section.addEventListener("mouseenter", handleMouseEnter);
     section.addEventListener("mouseleave", handleMouseLeave);
@@ -121,7 +107,7 @@ export function QuoteSection({
         }
       });
     };
-  }, [quote]);
+  }, [quote, author]);
 
   return (
     <section

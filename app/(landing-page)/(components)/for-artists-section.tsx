@@ -28,21 +28,25 @@ function ForArtistsCard({
     const card = cardRef.current;
     if (!card) return;
 
-    // Set initial state
-    gsap.set(card, { x: index === 0 ? -40 : 40, opacity: 0 });
+    const offset = index === 0 ? -40 : 40;
 
-    // Animate on scroll
+    // Set initial state - simple card entrance
+    gsap.set(card, { x: offset, opacity: 0, y: 40, force3D: true });
+
+    // Animate card muncul dengan offset dan delay
     gsap.to(card, {
       x: 0,
+      y: 0,
       opacity: 1,
-      duration: 0.8,
-      delay: index * 0.2,
+      duration: 0.9,
+      delay: index * 0.15,
       ease: "power3.out",
       scrollTrigger: {
         trigger: card,
-        start: "top center",
-        markers: false,
+        start: "top 85%",
+        toggleActions: "play none none none",
       },
+      force3D: true,
     });
 
     return () => {
@@ -83,25 +87,44 @@ function ForArtistsCard({
 }
 
 export function ForArtistsSection() {
-  const sectionRef = useRef<HTMLElement | null>(null);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
+  const cardsSectionRef = useRef<HTMLElement | null>(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
+    const header = headerRef.current;
+    const cardsSection = cardsSectionRef.current;
+    if (!section || !header || !cardsSection) return;
 
-    // Set initial state
-    gsap.set(section, { y: 40, opacity: 0 });
+    // Set initial states
+    gsap.set(header, { y: 40, opacity: 0 });
+    gsap.set(cardsSection, { y: 50, opacity: 0, force3D: true });
 
-    // Animate on scroll
-    gsap.to(section, {
+    // Animate header
+    gsap.to(header, {
       y: 0,
       opacity: 1,
-      duration: 1,
+      duration: 0.8,
       ease: "power3.out",
       scrollTrigger: {
         trigger: section,
-        start: "top center",
-        markers: false,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    // Animate cards section
+    gsap.to(cardsSection, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      delay: 0.2,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: section,
+        start: "top 85%",
+        toggleActions: "play none none none",
       },
     });
 
@@ -115,8 +138,8 @@ export function ForArtistsSection() {
   }, []);
 
   return (
-    <>
-      <header className="section-header max-w-6xl mx-auto px-4">
+    <div ref={sectionRef}>
+      <header ref={headerRef} className="section-header max-w-6xl mx-auto px-4">
         <div className="mb-2">
           <SplitText
             text="For Everyone"
@@ -154,7 +177,7 @@ export function ForArtistsSection() {
         />
       </header>
       <section
-        ref={sectionRef}
+        ref={cardsSectionRef}
         className="mx-auto grid max-w-6xl gap-10 rounded-3xl border border-white/10 bg-gradient-to-br from-[#0C1B33] via-[#1A3358]/50 to-[#0C1B33] px-6 py-16 shadow-[0_0_60px_rgba(248,228,115,0.05)] md:grid-cols-2 md:px-8"
         style={{
           background:
@@ -184,6 +207,6 @@ export function ForArtistsSection() {
           index={1}
         />
       </section>
-    </>
+    </div>
   );
 }

@@ -15,23 +15,29 @@ export function GallerySection() {
     const section = sectionRef.current;
     if (!section) return;
 
-    const ctx = gsap.context(() => {
-      gsap.set(section, { y: 40, opacity: 0 });
+    // Set initial state
+    gsap.set(section, { y: 40, opacity: 0 });
 
-      gsap.to(section, {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
+    // Animate on scroll
+    gsap.to(section, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: section,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === section) {
+          trigger.kill();
+        }
       });
-    }, section);
-
-    return () => ctx.revert();
+    };
   }, []);
 
   const galleryItems = [

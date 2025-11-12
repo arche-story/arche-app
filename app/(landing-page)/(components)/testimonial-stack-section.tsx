@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { useLenis } from "lenis/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -55,26 +55,22 @@ export function TestimonialStackSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
 
-  useEffect(() => {
-    if (
-      !pinRef.current ||
-      !sectionRef.current ||
-      !containerRef.current ||
-      !lenis
-    )
+  useLayoutEffect(() => {
+    const pinElement = pinRef.current;
+    const containerElement = containerRef.current;
+    if (!pinElement || !sectionRef.current || !containerElement || !lenis)
       return;
 
     const cards = Array.from(
-      containerRef.current.querySelectorAll<HTMLElement>(".testimonial-card")
+      containerElement.querySelectorAll<HTMLElement>(".testimonial-card")
     );
     if (!cards.length) return;
 
-    // Spacing config
-    const initialOffsetY = 800; // Cards mulai dari bawah
-    const finalStackGap = 10; // Jarak akhir saat di-stack
-    const scrollDuration = 2000; // Total scroll distance untuk animasi
+    const initialOffsetY = 800;
+    const finalStackGap = 10;
+    const scrollDuration = 2000;
 
-    // Set initial positions - cards overlap dari bawah
+    // Set initial states
     cards.reverse().forEach((card, index) => {
       gsap.set(card, {
         y: initialOffsetY + index * 40,
@@ -84,10 +80,10 @@ export function TestimonialStackSection() {
       });
     });
 
-    // Create pinned timeline - page tetap diam, cards yang bergerak
-    const tl = gsap.timeline({
+    // Create timeline with ScrollTrigger
+    const timeline = gsap.timeline({
       scrollTrigger: {
-        trigger: pinRef.current,
+        trigger: pinElement,
         start: "top top",
         end: `+=${scrollDuration}`,
         scrub: 1.2,
@@ -97,9 +93,8 @@ export function TestimonialStackSection() {
       },
     });
 
-    // Animate cards naik dari bawah dan stack
     cards.forEach((card, index) => {
-      tl.to(
+      timeline.to(
         card,
         {
           y: index * finalStackGap,
@@ -108,13 +103,17 @@ export function TestimonialStackSection() {
           opacity: 1,
           ease: "power2.inOut",
         },
-        index * 0.15 // Stagger timing
+        index * 0.15
       );
     });
 
     return () => {
-      tl.kill();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      timeline.kill();
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === pinElement) {
+          trigger.kill();
+        }
+      });
     };
   }, [lenis]);
 

@@ -24,40 +24,44 @@ export function CreativeSequenceCard({
     const card = cardRef.current;
     if (!card) return;
 
-    const ctx = gsap.context(() => {
-      // Rotasi berbeda untuk setiap card untuk efek variasi
-      const rotations = [-15, 12, -18, 15];
-      const initialRotation = rotations[index % rotations.length];
+    // Rotasi berbeda untuk setiap card untuk efek variasi
+    const rotations = [-15, 12, -18, 15];
+    const initialRotation = rotations[index % rotations.length];
 
-      // Set initial state - card mulai dari bawah dengan rotasi
-      gsap.set(card, {
-        y: 120,
-        opacity: 0,
-        scale: 0.85,
-        rotation: initialRotation,
-        transformOrigin: "center center",
-        force3D: true,
+    // Set initial state - card mulai dari bawah dengan rotasi
+    gsap.set(card, {
+      y: 120,
+      opacity: 0,
+      scale: 0.85,
+      rotation: initialRotation,
+      transformOrigin: "center center",
+      force3D: true,
+    });
+
+    // Animate card muncul dari bawah dengan rotasi
+    gsap.to(card, {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      rotation: 0,
+      duration: 1,
+      delay: index * 0.15,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: card,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+      force3D: true,
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === card) {
+          trigger.kill();
+        }
       });
-
-      // Animate card muncul dari bawah dengan rotasi
-      gsap.to(card, {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        rotation: 0,
-        duration: 1,
-        delay: index * 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: card,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-        force3D: true,
-      });
-    }, card);
-
-    return () => ctx.revert();
+    };
   }, [index]);
 
   useLayoutEffect(() => {

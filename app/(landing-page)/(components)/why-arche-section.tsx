@@ -14,27 +14,34 @@ export function WhyArcheSection() {
     const section = sectionRef.current;
     if (!section) return;
 
-    const ctx = gsap.context(() => {
-      gsap.set(section, { y: 60, opacity: 0 });
+    // Set initial state
+    gsap.set(section, { y: 60, opacity: 0 });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top 85%",
-          end: "top 40%",
-          scrub: 1,
-        },
+    // Create timeline with ScrollTrigger
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: "top 85%",
+        end: "top 40%",
+        scrub: 1,
+      },
+    });
+
+    tl.to(section, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: "power3.out",
+    });
+
+    return () => {
+      tl.kill();
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === section) {
+          trigger.kill();
+        }
       });
-
-      tl.to(section, {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power3.out",
-      });
-    }, section);
-
-    return () => ctx.revert();
+    };
   }, []);
 
   return (

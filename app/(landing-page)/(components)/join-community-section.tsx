@@ -15,64 +15,77 @@ export function JoinCommunitySection() {
     const section = sectionRef.current;
     if (!section) return;
 
-    // Set initial state
-    gsap.set(".eyebrow-join", { opacity: 0, y: 20 });
-    gsap.set(titleRef.current, { opacity: 0, y: 40 });
-    gsap.set(descRef.current, { opacity: 0, y: 30 });
-    gsap.set(".join-cta", { opacity: 0, y: 30 });
+    const q = gsap.utils.selector(section);
+    const eyebrow = q(".eyebrow-join");
+    const ctas = q(".join-cta");
+    const title = titleRef.current;
+    const desc = descRef.current;
 
-    // Animation timeline
-    gsap.to(".eyebrow-join", {
+    const targets = [...eyebrow, title, desc, ...ctas].filter(
+      Boolean
+    ) as Element[];
+
+    // Set initial states
+    if (targets.length) {
+      gsap.set(targets, { opacity: 0 });
+    }
+
+    gsap.set(eyebrow, { y: 20 });
+    if (title) {
+      gsap.set(title, { y: 40 });
+    }
+    if (desc) {
+      gsap.set(desc, { y: 30 });
+    }
+    gsap.set(ctas, { y: 30 });
+
+    const triggerConfig = {
+      trigger: section,
+      start: "top 80%",
+      toggleActions: "play none none none",
+    };
+
+    gsap.to(eyebrow, {
       opacity: 1,
       y: 0,
       duration: 0.6,
       ease: "power3.out",
-      scrollTrigger: {
-        trigger: section,
-        start: "top center",
-        markers: false,
-      },
+      scrollTrigger: triggerConfig,
     });
 
-    gsap.to(titleRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power3.out",
-      delay: 0.1,
-      scrollTrigger: {
-        trigger: section,
-        start: "top center",
-        markers: false,
-      },
-    });
+    if (title) {
+      gsap.to(title, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        delay: 0.1,
+        scrollTrigger: triggerConfig,
+      });
+    }
 
-    gsap.to(descRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      ease: "power3.out",
-      delay: 0.2,
-      scrollTrigger: {
-        trigger: section,
-        start: "top center",
-        markers: false,
-      },
-    });
+    if (desc) {
+      gsap.to(desc, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        delay: 0.2,
+        scrollTrigger: triggerConfig,
+      });
+    }
 
-    gsap.to(".join-cta", {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "power3.out",
-      stagger: 0.12,
-      delay: 0.3,
-      scrollTrigger: {
-        trigger: section,
-        start: "top center",
-        markers: false,
-      },
-    });
+    if (ctas.length) {
+      gsap.to(ctas, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        stagger: 0.12,
+        delay: 0.3,
+        scrollTrigger: triggerConfig,
+      });
+    }
 
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => {
