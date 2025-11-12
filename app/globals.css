@@ -47,3 +47,58 @@ body {
 .shimmer-effect {
   animation: shimmer 2s infinite;
 }
+
+/* Section Header Styles */
+.section-header {
+  @apply text-center mb-20 relative z-10;
+}
+
+.section-eyebrow {
+  @apply text-xs uppercase tracking-[0.35em] text-yellow-200/70 font-serif relative inline-block;
+}
+
+.section-eyebrow::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(248, 228, 115, 0.5), transparent);
+  background-size: 200% 100%;
+  animation: shimmer-underline 2s infinite;
+}
+
+@keyframes shimmer-underline {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.section-title {
+  @apply text-4xl md:text-6xl font-bold font-serif text-slate-50 mb-6 leading-tight;
+}
+
+.section-description {
+  @apply text-slate-100/70 max-w-3xl mx-auto leading-relaxed text-lg;
+}
+
+/* Typography Utilities */
+.text-accent {
+  @apply text-yellow-200/70;
+}
+
+.text-accent-secondary {
+  @apply text-yellow-200/60;
+}
+
+.text-body {
+  @apply text-slate-100/70;
+}
+
+.text-body-light {
+  @apply text-slate-100/60;
+}

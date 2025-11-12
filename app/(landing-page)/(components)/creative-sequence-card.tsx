@@ -25,13 +25,27 @@ export function CreativeSequenceCard({
     if (!card) return;
 
     const ctx = gsap.context(() => {
-      gsap.set(card, { y: 40, opacity: 0, scale: 0.95 });
+      // Rotasi berbeda untuk setiap card untuk efek variasi
+      const rotations = [-15, 12, -18, 15];
+      const initialRotation = rotations[index % rotations.length];
 
+      // Set initial state - card mulai dari bawah dengan rotasi
+      gsap.set(card, {
+        y: 120,
+        opacity: 0,
+        scale: 0.85,
+        rotation: initialRotation,
+        transformOrigin: "center center",
+        force3D: true,
+      });
+
+      // Animate card muncul dari bawah dengan rotasi
       gsap.to(card, {
         y: 0,
         opacity: 1,
         scale: 1,
-        duration: 0.8,
+        rotation: 0,
+        duration: 1,
         delay: index * 0.15,
         ease: "power3.out",
         scrollTrigger: {
@@ -39,6 +53,7 @@ export function CreativeSequenceCard({
           start: "top 85%",
           toggleActions: "play none none none",
         },
+        force3D: true,
       });
     }, card);
 
@@ -53,6 +68,7 @@ export function CreativeSequenceCard({
       gsap.to(card, {
         y: -8,
         scale: 1.02,
+        rotation: 0,
         boxShadow: "0 20px 60px rgba(248, 228, 115, 0.15)",
         duration: 0.3,
         ease: "power2.out",
@@ -61,6 +77,7 @@ export function CreativeSequenceCard({
       gsap.to(card, {
         y: 0,
         scale: 1,
+        rotation: 0,
         boxShadow: "0 0 40px rgba(248, 228, 115, 0.03)",
         duration: 0.3,
         ease: "power2.out",
@@ -73,7 +90,7 @@ export function CreativeSequenceCard({
       ref={cardRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0C1B33]/90 via-[#1A3358]/60 to-[#0C1B33]/90 p-6 backdrop-blur-sm transition-all duration-300"
+      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-linear-to-br from-[#0C1B33]/90 via-[#1A3358]/60 to-[#0C1B33]/90 p-6 backdrop-blur-sm transition-all duration-300"
       style={{
         background:
           "linear-gradient(135deg, rgba(12,27,51,0.9) 0%, rgba(26,51,88,0.6) 50%, rgba(12,27,51,0.9) 100%)",
@@ -101,22 +118,24 @@ export function CreativeSequenceCard({
 
       {/* Content */}
       <div className="relative z-10">
-        <div 
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-yellow-200/20 to-yellow-200/10 text-lg font-semibold text-yellow-200 shadow-[0_0_20px_rgba(248,228,115,0.2)] transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(248,228,115,0.3)]"
+        <div
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-yellow-200/20 to-yellow-200/10 text-lg font-semibold text-yellow-200 shadow-[0_0_20px_rgba(248,228,115,0.2)] transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(248,228,115,0.3)]"
           style={{
             lineHeight: 1,
             padding: 0,
           }}
         >
-          <span style={{ 
-            lineHeight: 1,
-            display: "block",
-            textAlign: "center",
-            width: "100%",
-            margin: 0,
-            padding: 0,
-            fontVariantNumeric: "tabular-nums",
-          }}>
+          <span
+            style={{
+              lineHeight: 1,
+              display: "block",
+              textAlign: "center",
+              width: "100%",
+              margin: 0,
+              padding: 0,
+              fontVariantNumeric: "tabular-nums",
+            }}
+          >
             {index + 1}
           </span>
         </div>

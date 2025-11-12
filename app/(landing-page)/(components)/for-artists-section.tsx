@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SplitText from "@/components/core/split-text";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -102,15 +103,53 @@ export function ForArtistsSection() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="mx-auto grid max-w-6xl gap-10 rounded-3xl border border-white/10 bg-gradient-to-br from-[#0C1B33] via-[#1A3358]/50 to-[#0C1B33] px-6 py-16 shadow-[0_0_60px_rgba(248,228,115,0.05)] md:grid-cols-2 md:px-8"
-      style={{
-        background:
-          "linear-gradient(135deg, #0C1B33 0%, #1A3358 50%, #0C1B33 100%)",
-      }}
-    >
-      <ForArtistsCard
+    <>
+      <header className="section-header max-w-6xl mx-auto px-4">
+        <div className="mb-2">
+          <SplitText
+            text="For Everyone"
+            tag="p"
+            className="section-eyebrow"
+            splitType="words"
+            delay={30}
+            duration={0.6}
+            from={{ opacity: 0, y: 20 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.2}
+          />
+        </div>
+        <SplitText
+          text="Built for Artists & Builders"
+          tag="h2"
+          className="section-title"
+          splitType="chars"
+          delay={50}
+          duration={0.8}
+          from={{ opacity: 0, y: 60, rotateX: -90 }}
+          to={{ opacity: 1, y: 0, rotateX: 0 }}
+          threshold={0.3}
+        />
+        <SplitText
+          text="Whether you're creating AI art or building the next generation of IP-aware applications, Arche provides the tools you need."
+          tag="p"
+          className="section-description"
+          splitType="words"
+          delay={30}
+          duration={0.6}
+          from={{ opacity: 0, y: 30 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0.2}
+        />
+      </header>
+      <section
+        ref={sectionRef}
+        className="mx-auto grid max-w-6xl gap-10 rounded-3xl border border-white/10 bg-gradient-to-br from-[#0C1B33] via-[#1A3358]/50 to-[#0C1B33] px-6 py-16 shadow-[0_0_60px_rgba(248,228,115,0.05)] md:grid-cols-2 md:px-8"
+        style={{
+          background:
+            "linear-gradient(135deg, #0C1B33 0%, #1A3358 50%, #0C1B33 100%)",
+        }}
+      >
+        <ForArtistsCard
         eyebrow="for artists & ai creators"
         title="Own the output you generate."
         description="Every prompt, every style transfer, every iteration — attach your name and timestamp. Arche lets you show the journey, not just the destination."
@@ -132,6 +171,7 @@ export function ForArtistsSection() {
         ]}
         index={1}
       />
-    </section>
+      </section>
+    </>
   );
 }

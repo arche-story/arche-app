@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SplitText from "@/components/core/split-text";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,7 +15,7 @@ export function WhyArcheSection() {
     if (!section) return;
 
     const ctx = gsap.context(() => {
-      gsap.set(section, { y: 60, opacity: 0, borderRadius: "0px" });
+      gsap.set(section, { y: 60, opacity: 0 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -28,7 +29,6 @@ export function WhyArcheSection() {
       tl.to(section, {
         y: 0,
         opacity: 1,
-        borderRadius: "24px",
         duration: 1,
         ease: "power3.out",
       });
@@ -38,30 +38,44 @@ export function WhyArcheSection() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative -mt-20 mx-auto max-w-6xl space-y-6 border border-white/10 px-6 py-16 shadow-[0_0_60px_rgba(248,228,115,0.08)] md:px-8"
-      style={{
-        background:
-          "linear-gradient(135deg, #0C1B33 0%, #1A3358 40%, #0C1B33 100%)",
-        borderTopLeftRadius: "0px",
-        borderTopRightRadius: "0px",
-        borderBottomLeftRadius: "24px",
-        borderBottomRightRadius: "24px",
-      }}
-    >
-      <p className="text-sm uppercase tracking-[0.35em] text-yellow-200/70">
-        why arche
-      </p>
-      <h2 className="text-3xl font-serif tracking-tight text-slate-50 md:text-4xl">
-        Preserve the moment your idea was born.
-      </h2>
-      <p className="max-w-3xl text-sm leading-relaxed text-slate-100/65 md:text-base">
-        In a world where AI can generate a thousand variations in a second,
-        Arche remembers the first spark — the draft, the hesitation, the
-        brushstroke before perfection. You don&apos;t just upload art; you
-        record authorship.
-      </p>
+    <section ref={sectionRef} className="relative mt-16 mx-auto max-w-6xl">
+      <header className="section-header">
+        <div className="mb-2">
+          <SplitText
+            text="why arche"
+            tag="p"
+            className="section-eyebrow"
+            splitType="words"
+            delay={30}
+            duration={0.6}
+            from={{ opacity: 0, y: 20 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.2}
+          />
+        </div>
+        <SplitText
+          text="Preserve the moment your idea was born."
+          tag="h2"
+          className="section-title"
+          splitType="chars"
+          delay={50}
+          duration={0.8}
+          from={{ opacity: 0, y: 60, rotateX: -90 }}
+          to={{ opacity: 1, y: 0, rotateX: 0 }}
+          threshold={0.3}
+        />
+        <SplitText
+          text="In a world where AI can generate a thousand variations in a second, Arche remembers the first spark — the draft, the hesitation, the brushstroke before perfection. You don't just upload art; you record authorship."
+          tag="p"
+          className="section-description"
+          splitType="words"
+          delay={30}
+          duration={0.6}
+          from={{ opacity: 0, y: 30 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0.2}
+        />
+      </header>
     </section>
   );
 }

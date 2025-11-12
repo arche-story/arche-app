@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CircularGallery from "@/components/core/circular-gallery";
+import SplitText from "@/components/core/split-text";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -74,15 +75,49 @@ export function GallerySection() {
 
   return (
     <section ref={sectionRef} className="mx-auto max-w-7xl px-4 py-16 md:px-8">
-      <div className="mb-8 text-center">
-        <h2 className="text-3xl font-serif tracking-tight text-slate-50 md:text-4xl">
-          Gallery
-        </h2>
-        <p className="mt-3 text-sm text-slate-100/60 md:text-base">
-          Explore the creative journey through our collection
-        </p>
-      </div>
-      <div className="w-full h-[600px] rounded-3xl overflow-hidden bg-gradient-to-br from-[#0C1B33]/50 via-[#1A3358]/30 to-[#0C1B33]/50 border border-white/10">
+      <header className="section-header">
+        <div className="mb-2 text-center">
+          <SplitText
+            text="Collection"
+            tag="p"
+            className="section-eyebrow"
+            splitType="words"
+            delay={30}
+            duration={0.6}
+            from={{ opacity: 0, y: 20 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.2}
+            textAlign="center"
+          />
+        </div>
+        <div className="text-center flex flex-col gap-2">
+          <SplitText
+            text="Gallery"
+            tag="h2"
+            className="section-title text-left"
+            splitType="chars"
+            delay={50}
+            duration={0.8}
+            from={{ opacity: 0, y: 60, rotateX: -90 }}
+            to={{ opacity: 1, y: 0, rotateX: 0 }}
+            threshold={0.3}
+            textAlign="center"
+          />
+          <SplitText
+            text="Explore the creative journey through our collection"
+            tag="p"
+            className="section-description text-left max-w-2xl"
+            splitType="words"
+            delay={30}
+            duration={0.6}
+            from={{ opacity: 0, y: 30 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.2}
+            textAlign="center"
+          />
+        </div>
+      </header>
+      <div className="w-full h-[600px] rounded-3xl overflow-hidden bg-linear-to-br from-[#0C1B33]/50 via-[#1A3358]/30 to-[#0C1B33]/50 border border-white/10">
         <CircularGallery
           items={galleryItems}
           bend={3}

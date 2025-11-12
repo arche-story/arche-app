@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import TextPressure from "@/components/core/text-pressure";
+import SplitText from "@/components/core/split-text";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,16 +20,14 @@ export function QuoteSection({
   author,
 }: QuoteSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const eyebrowRef = useRef<HTMLParagraphElement | null>(null);
   const quoteRef = useRef<HTMLDivElement | null>(null);
   const authorRef = useRef<HTMLParagraphElement | null>(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
-    const eyebrow = eyebrowRef.current;
     const quote = quoteRef.current;
     const author = authorRef.current;
-    if (!section || !eyebrow || !quote || !author) return;
+    if (!section || !quote || !author) return;
 
     let timeoutId: NodeJS.Timeout | undefined;
     let hoverTween: gsap.core.Tween | null = null;
@@ -77,7 +76,6 @@ export function QuoteSection({
       // If already in view, ensure everything is visible and skip animation
       if (isInView) {
         gsap.set(section, { opacity: 1, y: 0 });
-        gsap.set(eyebrow, { opacity: 1, y: 0 });
         gsap.set(quote, { opacity: 1, y: 0 });
         gsap.set(author, { opacity: 1, y: 0 });
         return () => {}; // Return empty cleanup
@@ -86,7 +84,6 @@ export function QuoteSection({
       const ctx = gsap.context(() => {
         // Set initial states - hide for animation
         gsap.set(section, { opacity: 0, y: 40 });
-        gsap.set(eyebrow, { opacity: 0, y: 20 });
         gsap.set(quote, { opacity: 0, y: 20 });
         gsap.set(author, { opacity: 0, y: 20 });
 
@@ -107,18 +104,6 @@ export function QuoteSection({
           duration: 0.8,
           ease: "power3.out",
         });
-
-        // Eyebrow
-        tl.to(
-          eyebrow,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.4"
-        );
 
         // Quote container
         tl.to(
@@ -176,12 +161,19 @@ export function QuoteSection({
         } as React.CSSProperties
       }
     >
-      <p
-        ref={eyebrowRef}
-        className="text-xs uppercase tracking-[0.4em] text-yellow-200/50"
-      >
-        {eyebrow}
-      </p>
+      <div className="mb-2">
+        <SplitText
+          text={eyebrow}
+          tag="p"
+          className="section-eyebrow"
+          splitType="words"
+          delay={30}
+          duration={0.6}
+          from={{ opacity: 0, y: 20 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0.2}
+        />
+      </div>
       <div ref={quoteRef} className="mt-6 md:mt-8 " style={{ opacity: 1 }}>
         <TextPressure
           text={quote}
