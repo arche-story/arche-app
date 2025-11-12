@@ -1,0 +1,49 @@
+@import "tailwindcss";
+@import "tailwindcss/utilities";
+
+:root {
+  --arche-navy: #0C1B33;
+  --arche-deep: #1A3358;
+  --arche-blue: #355C7D;
+  --arche-gold: #F8E473;
+  --arche-ochre: #E8C547;
+  --arche-cream: #EAEAEA;
+}
+
+html {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  background: var(--arche-navy);
+}
+
+h1, h2, h3 {
+  font-family: "DM Serif Display", ui-serif, Georgia, "Times New Roman", serif;
+  letter-spacing: -0.02em;
+}
+
+body {
+  background: radial-gradient(circle at top, rgba(248, 228, 115, 0.05), rgba(12, 27, 51, 1));
+}
+
+::selection {
+  background: rgba(248, 228, 115, 0.35);
+  color: #fff;
+}
+
+.glass-panel {
+  background: rgba(12, 27, 51, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-effect {
+  animation: shimmer 2s infinite;
+}
