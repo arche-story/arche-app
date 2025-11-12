@@ -29,8 +29,51 @@ export function QuoteSection({
     const author = authorRef.current;
     if (!section || !quote || !author) return;
 
-    let timeoutId: NodeJS.Timeout | undefined;
     let hoverTween: gsap.core.Tween | null = null;
+
+    // Set initial states
+    gsap.set(section, { opacity: 0, y: 40 });
+    gsap.set(quote, { opacity: 0, y: 20 });
+    gsap.set(author, { opacity: 0, y: 20 });
+
+    // Scroll reveal animation
+    gsap.to(section, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: section,
+        start: "top center",
+        markers: false,
+      },
+    });
+
+    gsap.to(quote, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      delay: 0.1,
+      scrollTrigger: {
+        trigger: section,
+        start: "top center",
+        markers: false,
+      },
+    });
+
+    gsap.to(author, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      delay: 0.2,
+      scrollTrigger: {
+        trigger: section,
+        start: "top center",
+        markers: false,
+      },
+    });
 
     // Hover animation
     const handleMouseEnter = () => {
@@ -68,80 +111,15 @@ export function QuoteSection({
     section.addEventListener("mouseenter", handleMouseEnter);
     section.addEventListener("mouseleave", handleMouseLeave);
 
-    const setupAnimation = () => {
-      // Check if section is already in view
-      const rect = section.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * 0.85;
-
-      // If already in view, ensure everything is visible and skip animation
-      if (isInView) {
-        gsap.set(section, { opacity: 1, y: 0 });
-        gsap.set(quote, { opacity: 1, y: 0 });
-        gsap.set(author, { opacity: 1, y: 0 });
-        return () => {}; // Return empty cleanup
-      }
-
-      const ctx = gsap.context(() => {
-        // Set initial states - hide for animation
-        gsap.set(section, { opacity: 0, y: 40 });
-        gsap.set(quote, { opacity: 0, y: 20 });
-        gsap.set(author, { opacity: 0, y: 20 });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top 85%",
-            toggleActions: "play none none none",
-            once: false,
-            immediateRender: false,
-          },
-        });
-
-        // Section container
-        tl.to(section, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-        });
-
-        // Quote container
-        tl.to(
-          quote,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.3"
-        );
-
-        // Author
-        tl.to(
-          author,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.3"
-        );
-      }, section);
-
-      return () => ctx.revert();
-    };
-
-    // Setup animation
-    const cleanup = setupAnimation();
-
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      if (cleanup) cleanup();
-      if (hoverTween) hoverTween.kill();
       section.removeEventListener("mouseenter", handleMouseEnter);
       section.removeEventListener("mouseleave", handleMouseLeave);
+      if (hoverTween) hoverTween.kill();
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === section) {
+          trigger.kill();
+        }
+      });
     };
   }, [quote]);
 

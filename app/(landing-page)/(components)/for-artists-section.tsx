@@ -28,24 +28,30 @@ function ForArtistsCard({
     const card = cardRef.current;
     if (!card) return;
 
-    const ctx = gsap.context(() => {
-      gsap.set(card, { x: index === 0 ? -40 : 40, opacity: 0 });
+    // Set initial state
+    gsap.set(card, { x: index === 0 ? -40 : 40, opacity: 0 });
 
-      gsap.to(card, {
-        x: 0,
-        opacity: 1,
-        duration: 0.8,
-        delay: index * 0.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: card,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
+    // Animate on scroll
+    gsap.to(card, {
+      x: 0,
+      opacity: 1,
+      duration: 0.8,
+      delay: index * 0.2,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: card,
+        start: "top center",
+        markers: false,
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === card) {
+          trigger.kill();
+        }
       });
-    }, card);
-
-    return () => ctx.revert();
+    };
   }, [index]);
 
   return (
@@ -83,23 +89,29 @@ export function ForArtistsSection() {
     const section = sectionRef.current;
     if (!section) return;
 
-    const ctx = gsap.context(() => {
-      gsap.set(section, { y: 40, opacity: 0 });
+    // Set initial state
+    gsap.set(section, { y: 40, opacity: 0 });
 
-      gsap.to(section, {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
+    // Animate on scroll
+    gsap.to(section, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: section,
+        start: "top center",
+        markers: false,
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === section) {
+          trigger.kill();
+        }
       });
-    }, section);
-
-    return () => ctx.revert();
+    };
   }, []);
 
   return (
@@ -150,27 +162,27 @@ export function ForArtistsSection() {
         }}
       >
         <ForArtistsCard
-        eyebrow="for artists & ai creators"
-        title="Own the output you generate."
-        description="Every prompt, every style transfer, every iteration — attach your name and timestamp. Arche lets you show the journey, not just the destination."
-        items={[
-          "Timeline of drafts and finals",
-          "On-chain registration via Story",
-          "Shareable creation proof",
-        ]}
-        index={0}
-      />
-      <ForArtistsCard
-        eyebrow="for builders & hackathon teams"
-        title="Ship a real IP aware front-end."
-        description="Integrate Story SDK, show the IP lifecycle, and present a UI that feels human-centered, not just a dev tool."
-        items={[
-          "Clear registration UX",
-          "Visualized IP states",
-          "Production-ready layout",
-        ]}
-        index={1}
-      />
+          eyebrow="for artists & ai creators"
+          title="Own the output you generate."
+          description="Every prompt, every style transfer, every iteration — attach your name and timestamp. Arche lets you show the journey, not just the destination."
+          items={[
+            "Timeline of drafts and finals",
+            "On-chain registration via Story",
+            "Shareable creation proof",
+          ]}
+          index={0}
+        />
+        <ForArtistsCard
+          eyebrow="for builders & hackathon teams"
+          title="Ship a real IP aware front-end."
+          description="Integrate Story SDK, show the IP lifecycle, and present a UI that feels human-centered, not just a dev tool."
+          items={[
+            "Clear registration UX",
+            "Visualized IP states",
+            "Production-ready layout",
+          ]}
+          index={1}
+        />
       </section>
     </>
   );

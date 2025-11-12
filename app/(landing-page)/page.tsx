@@ -6,6 +6,7 @@ import { TestimonialStackSection } from "@/app/(landing-page)/(components)/testi
 import { ForArtistsSection } from "@/app/(landing-page)/(components)/for-artists-section";
 import { GallerySection } from "@/app/(landing-page)/(components)/gallery-section";
 import { QuoteSection } from "@/app/(landing-page)/(components)/quote-section";
+import { JoinCommunitySection } from "@/app/(landing-page)/(components)/join-community-section";
 import SplitText from "@/components/core/split-text";
 
 export default function Page() {
@@ -104,6 +105,9 @@ export default function Page() {
           author="Vincent van Gogh"
         />
       </div>
+
+      {/* Section: Join Community */}
+      <JoinCommunitySection />
     </>
   );
 }
