@@ -1,10 +1,10 @@
 import { SiteHeader } from "@/components/site-header";
-import { HeroScroll } from "@/app/(marketing)/(components)/hero-scroll";
-import { WhyArcheSection } from "@/app/(marketing)/(components)/why-arche-section";
-import { CreativeSequenceCard } from "@/app/(marketing)/(components)/creative-sequence-card";
-import { ForArtistsSection } from "@/app/(marketing)/(components)/for-artists-section";
-import { GallerySection } from "@/app/(marketing)/(components)/gallery-section";
-import { QuoteSection } from "@/app/(marketing)/(components)/quote-section";
+import { HeroScroll } from "@/app/(landing-page)/(components)/hero-scroll";
+import { WhyArcheSection } from "@/app/(landing-page)/(components)/why-arche-section";
+import { CreativeSequenceCard } from "@/app/(landing-page)/(components)/creative-sequence-card";
+import { ForArtistsSection } from "@/app/(landing-page)/(components)/for-artists-section";
+import { GallerySection } from "@/app/(landing-page)/(components)/gallery-section";
+import { QuoteSection } from "@/app/(landing-page)/(components)/quote-section";
 
 export default function Page() {
   return (
