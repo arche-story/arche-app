@@ -96,39 +96,41 @@ export function JoinCommunitySection() {
     };
   }, []);
   return (
-    <section
-      ref={sectionRef}
-      className="w-full bg-[#0C1B33] flex flex-col items-center justify-center px-4 py-20"
-    >
-      <div className="w-full max-w-2xl flex flex-col gap-6 items-center">
-        <div className="mb-2 text-center">
-          <p className="eyebrow-join text-yellow-300/70 text-sm tracking-widest uppercase">
-            GET STARTED
+    <section className="w-full min-h-screen h-full flex items-center justify-center">
+      <div
+        ref={sectionRef}
+        className="w-full bg-[#0C1B33] flex flex-col items-center justify-center px-4 py-20 "
+      >
+        <div className="w-full max-w-2xl flex flex-col gap-6 items-center">
+          <div className="mb-2 text-center">
+            <p className="eyebrow-join text-yellow-300/70 text-sm tracking-widest uppercase">
+              GET STARTED
+            </p>
+          </div>
+          <h2
+            ref={titleRef}
+            className="text-5xl md:text-6xl font-bold text-white text-center"
+          >
+            Join Community
+          </h2>
+          <p
+            ref={descRef}
+            className="text-base md:text-lg text-gray-300 text-center"
+          >
+            Be part of a community that values creativity, ownership, and the
+            journey of artistic expression. Start creating, share your work, and
+            connect with fellow artists.
           </p>
-        </div>
-        <h2
-          ref={titleRef}
-          className="text-5xl md:text-6xl font-bold text-white text-center"
-        >
-          Join Community
-        </h2>
-        <p
-          ref={descRef}
-          className="text-base md:text-lg text-gray-300 text-center"
-        >
-          Be part of a community that values creativity, ownership, and the
-          journey of artistic expression. Start creating, share your work, and
-          connect with fellow artists.
-        </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 items-center justify-center w-fit">
-          <button className="join-cta rounded-full bg-yellow-300 px-8 py-3 text-base font-medium text-slate-900 transition hover:bg-yellow-200 whitespace-nowrap">
-            Start Creating
-          </button>
-          <button className="join-cta rounded-full border-2 border-yellow-300 px-8 py-3 text-base font-medium text-yellow-300 transition hover:border-yellow-200 hover:bg-yellow-300/10 whitespace-nowrap">
-            View Gallery
-          </button>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-center w-fit">
+            <button className="join-cta rounded-full bg-yellow-300 px-8 py-3 text-base font-medium text-slate-900 transition hover:bg-yellow-200 whitespace-nowrap">
+              Start Creating
+            </button>
+            <button className="join-cta rounded-full border-2 border-yellow-300 px-8 py-3 text-base font-medium text-yellow-300 transition hover:border-yellow-200 hover:bg-yellow-300/10 whitespace-nowrap">
+              View Gallery
+            </button>
+          </div>
         </div>
       </div>
     </section>
