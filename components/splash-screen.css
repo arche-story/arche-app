@@ -1,70 +1,141 @@
-.splash-screen {
+/* Trixy Protocol Style - Kinetic Splash Screen */
+.splash-screen-kinetic {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0C1B33;
   overflow: hidden;
-  background: transparent;
   pointer-events: auto;
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
 }
 
-.splash-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* Center Content Wrapper */
+.splash-center-content {
+  position: relative;
+  width: 18rem;
+  height: 18rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Typography Layer */
+.splash-typography-layer {
+  position: absolute;
+  z-index: 30;
+  text-align: center;
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+.splash-text {
+  font-weight: 700;
+  font-size: 3rem;
+  color: #F8E473;
+  font-family: "DM Serif Display", ui-serif, Georgia, serif;
+  letter-spacing: -0.05em;
+  opacity: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+/* Image Layer */
+.splash-image-layer {
+  position: absolute;
+  z-index: 20;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: stretch;
+  border-radius: 0.75rem;
   overflow: hidden;
-  pointer-events: none;
-  will-change: transform;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.splash-image-wrapper {
+  will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
 }
 
-.layer-1 {
-  z-index: 10005;
-}
-
-.layer-2 {
-  z-index: 10004;
-}
-
-.layer-3 {
-  z-index: 10003;
-}
-
-.layer-4 {
-  z-index: 10002;
-}
-
-.layer-5 {
-  z-index: 10001;
-}
-
-.wave-svg {
-  position: absolute;
-  right: -5%;
-  top: 0;
-  width: 20%;
+.splash-image {
+  width: 100%;
   height: 100%;
-  margin: 0;
-  padding: 0;
-  display: block;
-  will-change: auto;
+  object-fit: cover;
+}
+
+/* Progress Section */
+.splash-progress-section {
+  position: absolute;
+  bottom: 3rem;
+  left: 0;
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.splash-counter {
+  font-family: ui-monospace, "SF Mono", Monaco, "Cascadia Mono", "Courier New", monospace;
+  color: #F8E473;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.splash-progress-bar-bg {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.splash-progress-bar-fill {
+  height: 100%;
+  background: #F8E473;
+  transform-origin: left center;
+  transform: scaleX(0);
+  will-change: transform;
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-  .wave-svg {
-    width: 25%;
-    right: -8%;
+@media (min-width: 768px) {
+  .splash-center-content {
+    width: 24rem;
+    height: 24rem;
+  }
+
+  .splash-text {
+    font-size: 4.5rem;
+  }
+
+  .splash-image-layer {
+    border-radius: 1rem;
+  }
+
+  .splash-progress-section {
+    padding: 0 3rem;
+  }
+
+  .splash-counter {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .splash-text {
+    font-size: 5rem;
   }
 }
 

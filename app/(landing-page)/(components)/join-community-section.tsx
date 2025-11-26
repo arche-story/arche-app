@@ -3,13 +3,19 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Meteors } from "@/components/ui/meteors";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
+import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
+import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function JoinCommunitySection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
+  const confettiRef = useRef<ConfettiRef>(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -21,9 +27,7 @@ export function JoinCommunitySection() {
     const title = titleRef.current;
     const desc = descRef.current;
 
-    const targets = [...eyebrow, title, desc, ...ctas].filter(
-      Boolean
-    ) as Element[];
+    const targets = [...eyebrow, title ? [title] : [], desc ? [desc] : [], ...ctas].flat().filter(Boolean);
 
     // Set initial states
     if (targets.length) {
@@ -95,11 +99,22 @@ export function JoinCommunitySection() {
       });
     };
   }, []);
+
+  const handleStartCreating = () => {
+    confettiRef.current?.fire({});
+  };
+
   return (
-    <section className="w-full min-h-screen h-full flex items-center justify-center">
+    <section className="relative w-full min-h-screen h-full flex items-center justify-center overflow-hidden">
+      <Meteors number={20} className="opacity-50" />
+      <Confetti
+        ref={confettiRef}
+        className="absolute left-0 top-0 z-0 size-full"
+      />
+      
       <div
         ref={sectionRef}
-        className="w-full bg-[#0C1B33] flex flex-col items-center justify-center px-4 py-20 "
+        className="relative z-10 w-full flex flex-col items-center justify-center px-4 py-20"
       >
         <div className="w-full max-w-2xl flex flex-col gap-6 items-center">
           <div className="mb-2 text-center">
@@ -107,12 +122,21 @@ export function JoinCommunitySection() {
               GET STARTED
             </p>
           </div>
-          <h2
-            ref={titleRef}
-            className="text-5xl md:text-6xl font-bold text-white text-center"
-          >
-            Join Community
-          </h2>
+          
+          <div ref={titleRef} className="text-center">
+             <AnimatedGradientText
+              className="text-5xl md:text-6xl font-bold inline-flex"
+              colorFrom="#F8E8B0"
+              colorTo="#F8E473"
+             >
+              <span className={cn(
+                "inline animate-gradient bg-linear-to-r from-[#F8E8B0] via-[#F8E473] to-[#F8E8B0] bg-size-[var(--bg-size)_100%] bg-clip-text text-transparent",
+              )}>
+                Join Community
+              </span>
+             </AnimatedGradientText>
+          </div>
+
           <p
             ref={descRef}
             className="text-base md:text-lg text-gray-300 text-center"
@@ -123,11 +147,23 @@ export function JoinCommunitySection() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-center w-fit">
-            <button className="join-cta rounded-full bg-yellow-300 px-8 py-3 text-base font-medium text-slate-900 transition hover:bg-yellow-200 whitespace-nowrap">
-              Start Creating
-            </button>
-            <button className="join-cta rounded-full border-2 border-yellow-300 px-8 py-3 text-base font-medium text-yellow-300 transition hover:border-yellow-200 hover:bg-yellow-300/10 whitespace-nowrap">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-fit mt-4">
+            <div className="join-cta">
+              <ShimmerButton
+                className="shadow-2xl"
+                shimmerColor="#F8E8B0"
+                shimmerSize="0.1em"
+                borderRadius="9999px"
+                background="rgba(248, 232, 176, 0.1)"
+                onClick={handleStartCreating}
+              >
+                <span className="whitespace-pre-wrap text-center text-base font-medium leading-none tracking-tight text-[#F8E8B0] dark:from-white dark:to-slate-900/10 lg:text-lg">
+                  Start Creating
+                </span>
+              </ShimmerButton>
+            </div>
+            
+            <button className="join-cta rounded-full border-2 border-yellow-300/30 px-8 py-3 text-base font-medium text-yellow-300 transition hover:border-yellow-200 hover:bg-yellow-300/10 whitespace-nowrap backdrop-blur-sm">
               View Gallery
             </button>
           </div>

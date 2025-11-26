@@ -5,6 +5,7 @@ import { useLenis } from "lenis/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SplitText from "@/components/core/split-text";
+import { SparklesText } from "@/components/ui/sparkles-text";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -191,10 +192,15 @@ export function TestimonialStackSection() {
               </blockquote>
 
               {/* Author Info */}
-              <div className="mt-auto">
-                <h3 className="text-2xl md:text-3xl font-black text-slate-50 tracking-tight mb-1">
-                  - {testimonials[testimonials.length - 1].name} -
-                </h3>
+              <div className="mt-auto flex flex-col items-center">
+                <div className="mb-1">
+                  <SparklesText
+                    className="text-2xl md:text-3xl font-black text-slate-50 tracking-tight"
+                    colors={{ first: "#F8E8B0", second: "#F8E473" }}
+                  >
+                    {`- ${testimonials[testimonials.length - 1].name} -`}
+                  </SparklesText>
+                </div>
                 <p className="text-sm md:text-base text-slate-100/60 uppercase tracking-[0.2em] font-medium">
                   {testimonials[testimonials.length - 1].role}
                 </p>
@@ -233,10 +239,15 @@ export function TestimonialStackSection() {
                     </blockquote>
 
                     {/* Author Info */}
-                    <div className="mt-auto">
-                      <h3 className="text-2xl md:text-3xl font-black text-slate-50 tracking-tight mb-1">
-                        - {testimonial.name} -
-                      </h3>
+                    <div className="mt-auto flex flex-col items-center">
+                      <div className="mb-1">
+                        <SparklesText
+                          className="text-2xl md:text-3xl font-black text-slate-50 tracking-tight"
+                          colors={{ first: "#F8E8B0", second: "#F8E473" }}
+                        >
+                          {`- ${testimonial.name} -`}
+                        </SparklesText>
+                      </div>
                       <p className="text-sm md:text-base text-slate-100/60 uppercase tracking-[0.2em] font-medium">
                         {testimonial.role}
                       </p>

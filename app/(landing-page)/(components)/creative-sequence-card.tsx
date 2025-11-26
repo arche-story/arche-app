@@ -1,8 +1,9 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import PixelCard from "@/components/ui/pixel-canvas";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,7 +19,6 @@ export function CreativeSequenceCard({
   index,
 }: CreativeSequenceCardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
 
   useLayoutEffect(() => {
     const card = cardRef.current;
@@ -64,66 +64,24 @@ export function CreativeSequenceCard({
     };
   }, [index]);
 
-  useLayoutEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
-
-    if (isHovered) {
-      gsap.to(card, {
-        y: -8,
-        scale: 1.02,
-        rotation: 0,
-        boxShadow: "0 20px 60px rgba(248, 228, 115, 0.15)",
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    } else {
-      gsap.to(card, {
-        y: 0,
-        scale: 1,
-        rotation: 0,
-        boxShadow: "0 0 40px rgba(248, 228, 115, 0.03)",
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    }
-  }, [isHovered]);
-
   return (
     <div
       ref={cardRef}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-linear-to-br from-[#0C1B33]/90 via-[#1A3358]/60 to-[#0C1B33]/90 p-6 backdrop-blur-sm transition-all duration-300"
-      style={{
-        background:
-          "linear-gradient(135deg, rgba(12,27,51,0.9) 0%, rgba(26,51,88,0.6) 50%, rgba(12,27,51,0.9) 100%)",
-      }}
+      className="group relative h-full"
     >
-      {/* Van Gogh brushstroke effect */}
-      <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      <PixelCard
+        variant="yellow"
+        gap={10}
+        speed={30}
+        colors="#F8E8B0,#F8E473,#FFD700"
+        className="flex flex-col items-start p-8 rounded-2xl border border-white/10 bg-linear-to-br from-[#0C1B33] via-[#1A3358]/80 to-[#0C1B33] backdrop-blur-sm transition-all duration-500 hover:border-yellow-200/30 hover:shadow-[0_0_30px_rgba(248,228,115,0.15)] h-full"
+      >
+        {/* Subtle top border accent */}
+        <div className="absolute top-0 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-yellow-200/40 to-transparent z-10" />
+        
+        {/* Number Badge */}
         <div
-          className="absolute -left-4 top-4 h-32 w-32 rounded-full blur-2xl"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(248,228,115,0.2) 0%, transparent 70%)",
-            transform: "rotate(45deg)",
-          }}
-        />
-        <div
-          className="absolute -right-4 bottom-4 h-24 w-24 rounded-full blur-xl"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(232,197,71,0.15) 0%, transparent 70%)",
-            transform: "rotate(-30deg)",
-          }}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10">
-        <div
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-yellow-200/20 to-yellow-200/10 text-lg font-semibold text-yellow-200 shadow-[0_0_20px_rgba(248,228,115,0.2)] transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(248,228,115,0.3)]"
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-yellow-200/20 to-yellow-200/5 text-xl font-bold text-yellow-200 shadow-[0_0_20px_rgba(248,228,115,0.2)] transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_35px_rgba(248,228,115,0.4)] border border-yellow-200/30 relative z-10"
           style={{
             lineHeight: 1,
             padding: 0,
@@ -143,25 +101,20 @@ export function CreativeSequenceCard({
             {index + 1}
           </span>
         </div>
-        <h4 className="mt-5 text-lg font-medium text-slate-50 transition-colors duration-300 group-hover:text-yellow-200/90">
+        
+        {/* Title */}
+        <h4 className="mt-6 text-xl font-bold text-slate-50 transition-colors duration-300 group-hover:text-yellow-200 relative z-10">
           {title}
         </h4>
-        <p className="mt-3 text-sm leading-relaxed text-slate-100/70 transition-colors duration-300 group-hover:text-slate-100/90">
+        
+        {/* Description */}
+        <p className="mt-4 text-base leading-relaxed text-slate-100/70 transition-colors duration-300 group-hover:text-slate-100/90 relative z-10">
           {desc}
         </p>
-      </div>
-
-      {/* Brushstroke border animation */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-        <div
-          className="absolute inset-0 rounded-2xl shimmer-effect"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(248,228,115,0.1), transparent)",
-            backgroundSize: "200% 100%",
-          }}
-        />
-      </div>
+        
+        {/* Bottom corner accent */}
+        <div className="absolute bottom-0 right-0 w-24 h-24 bg-linear-to-tl from-yellow-200/5 to-transparent rounded-tl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      </PixelCard>
     </div>
   );
 }

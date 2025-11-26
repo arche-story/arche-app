@@ -7,7 +7,9 @@ import { ForArtistsSection } from "@/app/(landing-page)/(components)/for-artists
 import { GallerySection } from "@/app/(landing-page)/(components)/gallery-section";
 import { QuoteSection } from "@/app/(landing-page)/(components)/quote-section";
 import { JoinCommunitySection } from "@/app/(landing-page)/(components)/join-community-section";
+import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern";
 import SplitText from "@/components/core/split-text";
+import { cn } from "@/lib/utils";
 
 export default function Page() {
   return (
@@ -15,12 +17,26 @@ export default function Page() {
       <SiteHeader revealOnScroll />
       <HeroScroll />
 
+      {/* Global Animated Grid Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-x-hidden">
+        <AnimatedGridPattern
+          numSquares={30}
+          maxOpacity={0.1}
+          duration={3}
+          repeatDelay={1}
+          className={cn(
+            "mask-[radial-gradient(600px_circle_at_center,white,transparent)]",
+            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12 fill-yellow-500/5 stroke-yellow-500/10"
+          )}
+        />
+      </div>
+
       {/* Section: Why Arche */}
-      <div className="px-4 py-16 rounded-2xl">
+      <div className="relative z-10 px-4 py-16 rounded-2xl">
         <WhyArcheSection />
       </div>
 
-      <section className="mx-auto max-w-6xl bg-arche-navy px-4 py-16">
+      <section className="relative z-10 mx-auto max-w-6xl bg-arche-navy px-4 py-16">
         {/* Header */}
         <header className="section-header">
           <div className="mb-2">
@@ -85,20 +101,22 @@ export default function Page() {
       </section>
 
       {/* Section: Testimonials */}
-      <TestimonialStackSection />
+      <div className="relative z-10 overflow-x-hidden">
+        <TestimonialStackSection />
+      </div>
 
       {/* Section: For builders & artists */}
-      <div className="px-4 py-16">
+      <div className="relative z-10 overflow-x-hidden px-4 py-16">
         <ForArtistsSection />
       </div>
 
       {/* Section: Gallery */}
-      <div className="px-4 py-16">
+      <div className="relative z-10 px-4 py-16">
         <GallerySection />
       </div>
 
       {/* Section: Quote */}
-      <div className="px-4 py-16">
+      <div className="relative z-10 px-4 py-16">
         <QuoteSection
           eyebrow="inspiration"
           quote="I dream of painting and then I paint my dream."
@@ -107,7 +125,9 @@ export default function Page() {
       </div>
 
       {/* Section: Join Community */}
-      <JoinCommunitySection />
+      <div className="relative z-10">
+        <JoinCommunitySection />
+      </div>
     </>
   );
 }
