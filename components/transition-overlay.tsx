@@ -12,11 +12,14 @@ import Image from "next/image";
 import gsap from "gsap";
 import "./transition-overlay.css";
 
+// Van Gogh Starry Night Palette
+const COLORS = ["#0C1B33", "#1A3358", "#355C7D", "#E8C547", "#F8E473"];
+
 export function TransitionOverlay({ children }: { children: React.ReactNode }) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const logoOverlayRef = useRef<HTMLDivElement>(null);
   const logoImageRef = useRef<HTMLDivElement>(null);
-  const blocksRef = useRef<HTMLDivElement[]>([]);
+  const layersRef = useRef<(HTMLDivElement | null)[]>([]);
   const isTransitioningRef = useRef(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -28,40 +31,39 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
       const baseRoute = "/";
       const featureRoutes = ["/studio", "/timeline", "/gallery"];
 
-      const normalizedFrom =
-        fromRoute === "/" ? "/" : fromRoute.replace(/\/$/, "");
-      const normalizedTo = toRoute === "/" ? "/" : toRoute.replace(/\/$/, "");
+      // Normalize routes to remove trailing slashes and query params
+      const cleanFrom = fromRoute.split("?")[0].replace(/\/$/, "") || "/";
+      const cleanTo = toRoute.split("?")[0].replace(/\/$/, "") || "/";
 
-      const isFromBaseToFeature =
-        normalizedFrom === baseRoute && featureRoutes.includes(normalizedTo);
-      const isFromFeatureToBase =
-        featureRoutes.includes(normalizedFrom) && normalizedTo === baseRoute;
+      const isFromBase = cleanFrom === baseRoute;
+      const isToBase = cleanTo === baseRoute;
+      
+      const isFromFeature = featureRoutes.some(r => cleanFrom.startsWith(r));
+      const isToFeature = featureRoutes.some(r => cleanTo.startsWith(r));
 
-      return isFromBaseToFeature || isFromFeatureToBase;
+      // Case 1: Home to Feature -> Show Transition
+      if (isFromBase && isToFeature) return true;
+
+      // Case 2: Feature to Home -> Show Transition
+      if (isFromFeature && isToBase) return true;
+
+      // Case 3: Feature to Feature -> No Transition (for speed)
+      if (isFromFeature && isToFeature) return false;
+
+      // Default: Show transition for other major navigation (optional, set to false if strict)
+      return false;
     },
     []
   );
 
-  const createBlocks = () => {
-    if (!overlayRef.current) return;
-
-    blocksRef.current = [];
-    overlayRef.current.innerHTML = "";
-
-    for (let i = 0; i < 20; i++) {
-      const block = document.createElement("div");
-      block.className = "transition-block";
-      overlayRef.current.appendChild(block);
-      blocksRef.current.push(block);
-    }
-  };
-
   const setupGSAP = () => {
-    blocksRef.current.forEach((block) => {
-      gsap.set(block, {
-        scaleX: 0,
-        transformOrigin: "left",
-      });
+    layersRef.current.forEach((layer, i) => {
+      if (layer) {
+        gsap.set(layer, {
+          scaleY: 0,
+          transformOrigin: i % 2 === 0 ? "top" : "bottom",
+        });
+      }
     });
 
     if (logoOverlayRef.current) {
@@ -90,14 +92,16 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
         },
       });
 
-      tl.to(blocksRef.current, {
-        scaleX: 1,
+      // Animate layers IN ("Painting" the screen)
+      tl.to(layersRef.current, {
+        scaleY: 1,
         duration: 0.6,
-        stagger: 0.03,
-        ease: "power2.inOut",
-        transformOrigin: "left",
+        stagger: 0.05,
+        ease: "power3.inOut",
+        transformOrigin: (i) => (i % 2 === 0 ? "top" : "bottom"),
       });
 
+      // Logo enters
       tl.to(
         logoOverlayRef.current,
         {
@@ -106,7 +110,7 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
           duration: 0.4,
           ease: "power2.out",
         },
-        "-=0.2"
+        "-=0.4"
       );
 
       if (logoImageRef.current) {
@@ -118,7 +122,7 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
             duration: 0.6,
             ease: "back.out(1.2)",
           },
-          "-=0.3"
+          "-=0.4"
         );
       }
     },
@@ -129,19 +133,16 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
     const tl = gsap.timeline({
       onComplete: () => {
         isTransitioningRef.current = false;
+        // Reset layers for next time (optional, but good practice)
+        // setupGSAP(); 
       },
     });
 
-    blocksRef.current.forEach((block) => {
-      gsap.set(block, {
-        transformOrigin: "right",
-      });
-    });
-
+    // Logo exits first
     if (logoImageRef.current) {
       tl.to(logoImageRef.current, {
         opacity: 0,
-        scale: 1,
+        scale: 1.1,
         duration: 0.3,
         ease: "power2.in",
       });
@@ -151,28 +152,28 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
       logoOverlayRef.current,
       {
         opacity: 0,
-        scale: 0.8,
+        scale: 0.9,
         duration: 0.3,
         ease: "power2.in",
       },
-      "-=0.1"
+      "-=0.2"
     );
 
+    // Animate layers OUT (Peeling away)
     tl.to(
-      blocksRef.current,
+      layersRef.current,
       {
-        scaleX: 0,
+        scaleY: 0,
         duration: 0.6,
-        stagger: 0.03,
-        ease: "power2.inOut",
-        transformOrigin: "right",
+        stagger: 0.05,
+        ease: "power3.inOut",
+        transformOrigin: (i) => (i % 2 === 0 ? "bottom" : "top"), // Reverse origin
       },
       "-=0.1"
     );
   };
 
   useLayoutEffect(() => {
-    createBlocks();
     setupGSAP();
 
     setTimeout(() => {
@@ -188,14 +189,17 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
     const previousPathname = previousPathnameRef.current;
     previousPathnameRef.current = pathname;
 
-    if (previousPathname && shouldShowTransition(previousPathname, pathname)) {
-      const timer = setTimeout(() => {
+    // If we just navigated (pathname changed), reveal the page
+    if (previousPathname && previousPathname !== pathname) {
+       // Logic check could be added here if we only want transition on certain routes
+       // But since we triggered coverPage, we assume we want revealPage.
+       const timer = setTimeout(() => {
         revealPage();
       }, 50);
 
       return () => clearTimeout(timer);
     }
-  }, [pathname, isInitialized, shouldShowTransition]);
+  }, [pathname, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -232,8 +236,9 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
           e.preventDefault();
           coverPage(targetRoute);
         } else {
-          e.preventDefault();
-          router.push(targetRoute);
+          // If we don't show transition, just route normally
+          // e.preventDefault(); // Only prevent if we are handling it
+          // router.push(targetRoute);
         }
       } catch {
         if (href && href.startsWith("/")) {
@@ -242,9 +247,6 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
             if (shouldShowTransition(pathname, targetRoute)) {
               e.preventDefault();
               coverPage(href);
-            } else {
-              e.preventDefault();
-              router.push(href);
             }
           }
         }
@@ -260,7 +262,21 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div ref={overlayRef} className="transition-overlay" />
+      <div ref={overlayRef} className="transition-overlay">
+        {COLORS.map((color, i) => (
+          <div
+            key={i}
+            ref={(el) => {
+              layersRef.current[i] = el;
+            }}
+            className="transition-layer"
+            style={{
+              backgroundColor: color,
+              zIndex: 5000 + i,
+            }}
+          />
+        ))}
+      </div>
       <div ref={logoOverlayRef} className="transition-logo-overlay">
         <div ref={logoImageRef} className="transition-logo-image-wrapper">
           <Image

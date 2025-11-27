@@ -36,97 +36,99 @@ export default function Page() {
         <WhyArcheSection />
       </div>
 
-      <section className="relative z-10 mx-auto max-w-6xl bg-arche-navy px-4 py-16">
-        {/* Header */}
-        <header className="section-header">
-          <div className="mb-2">
+      <div className="overflow-x-hidden">
+        <section className="relative z-10 mx-auto max-w-6xl bg-arche-navy px-4 py-16">
+          {/* Header */}
+          <header className="section-header">
+            <div className="mb-2">
+              <SplitText
+                text="Creative Process"
+                tag="p"
+                className="section-eyebrow"
+                splitType="words"
+                delay={30}
+                duration={0.6}
+                from={{ opacity: 0, y: 20 }}
+                to={{ opacity: 1, y: 0 }}
+                threshold={0.2}
+              />
+            </div>
             <SplitText
-              text="Creative Process"
+              text="Your Creative Sequence"
+              tag="h2"
+              className="section-title"
+              splitType="chars"
+              delay={50}
+              duration={0.8}
+              from={{ opacity: 0, y: 60, rotateX: -90 }}
+              to={{ opacity: 1, y: 0, rotateX: 0 }}
+              threshold={0.3}
+            />
+            <SplitText
+              text="Arche guides you through a gentle, deliberate flow — from imagination to on-chain permanence."
               tag="p"
-              className="section-eyebrow"
+              className="section-description"
               splitType="words"
               delay={30}
               duration={0.6}
-              from={{ opacity: 0, y: 20 }}
+              from={{ opacity: 0, y: 30 }}
               to={{ opacity: 1, y: 0 }}
               threshold={0.2}
             />
+          </header>
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                title: "Paint",
+                desc: "Describe your scene, your mood, your emotion. Let the AI render it in seconds.",
+              },
+              {
+                title: "Save",
+                desc: "Each variation is kept as a version in your timeline. No idea is ever lost.",
+              },
+              {
+                title: "Sign",
+                desc: "Register the final piece on Story Protocol and make your authorship verifiable.",
+              },
+            ].map((step, idx) => (
+              <CreativeSequenceCard
+                key={step.title}
+                title={step.title}
+                desc={step.desc}
+                index={idx}
+              />
+            ))}
           </div>
-          <SplitText
-            text="Your Creative Sequence"
-            tag="h2"
-            className="section-title"
-            splitType="chars"
-            delay={50}
-            duration={0.8}
-            from={{ opacity: 0, y: 60, rotateX: -90 }}
-            to={{ opacity: 1, y: 0, rotateX: 0 }}
-            threshold={0.3}
-          />
-          <SplitText
-            text="Arche guides you through a gentle, deliberate flow — from imagination to on-chain permanence."
-            tag="p"
-            className="section-description"
-            splitType="words"
-            delay={30}
-            duration={0.6}
-            from={{ opacity: 0, y: 30 }}
-            to={{ opacity: 1, y: 0 }}
-            threshold={0.2}
-          />
-        </header>
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            {
-              title: "Paint",
-              desc: "Describe your scene, your mood, your emotion. Let the AI render it in seconds.",
-            },
-            {
-              title: "Save",
-              desc: "Each variation is kept as a version in your timeline. No idea is ever lost.",
-            },
-            {
-              title: "Sign",
-              desc: "Register the final piece on Story Protocol and make your authorship verifiable.",
-            },
-          ].map((step, idx) => (
-            <CreativeSequenceCard
-              key={step.title}
-              title={step.title}
-              desc={step.desc}
-              index={idx}
-            />
-          ))}
+        </section>
+
+        {/* Section: Testimonials */}
+        <div className="relative z-10 overflow-x-hidden">
+          <TestimonialStackSection />
         </div>
-      </section>
 
-      {/* Section: Testimonials */}
-      <div className="relative z-10 overflow-x-hidden">
-        <TestimonialStackSection />
-      </div>
+        {/* Section: For builders & artists */}
+        <div className="relative z-10 overflow-x-hidden px-4 py-16">
+          <ForArtistsSection />
+        </div>
 
-      {/* Section: For builders & artists */}
-      <div className="relative z-10 overflow-x-hidden px-4 py-16">
-        <ForArtistsSection />
-      </div>
+        {/* Section: Gallery */}
+        <div className="relative z-10 px-4 py-16">
+          <GallerySection />
+        </div>
 
-      {/* Section: Gallery */}
-      <div className="relative z-10 px-4 py-16">
-        <GallerySection />
-      </div>
+        {/* Section: Quote */}
+        <div className="relative z-10 px-4 py-16">
+          <QuoteSection
+            eyebrow="inspiration"
+            quote="I dream of painting and then I paint my dream."
+            author="Vincent van Gogh"
+          />
+        </div>
 
-      {/* Section: Quote */}
-      <div className="relative z-10 px-4 py-16">
-        <QuoteSection
-          eyebrow="inspiration"
-          quote="I dream of painting and then I paint my dream."
-          author="Vincent van Gogh"
-        />
-      </div>
-
-      {/* Section: Join Community */}
-      <div className="relative z-10">
-        <JoinCommunitySection />
+        {/* Section: Join Community */}
+        <div className="relative z-10">
+          <JoinCommunitySection />
+        </div>
       </div>
     </>
   );

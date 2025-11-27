@@ -7,7 +7,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #0C1B33;
+  background: #0c1b33;
   overflow: hidden;
   pointer-events: auto;
   will-change: transform;
@@ -15,55 +15,86 @@
   backface-visibility: hidden;
 }
 
-/* Center Content Wrapper */
-.splash-center-content {
-  position: relative;
-  width: 18rem;
-  height: 18rem;
+/* Video Layer */
+.splash-video-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.splash-bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.splash-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 27, 51, 0.65); /* Deep Blue/Navy overlay */
+  backdrop-filter: blur(4px); /* Slight blur to keep focus on content */
+}
+
+/* Content Container */
+.splash-content-container {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Typography Stack */
+.splash-typography-stack {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Typography Layer */
-.splash-typography-layer {
-  position: absolute;
-  z-index: 30;
-  text-align: center;
-  mix-blend-mode: difference;
-  pointer-events: none;
-}
-
 .splash-text {
   font-weight: 700;
-  font-size: 3rem;
-  color: #F8E473;
+  font-size: 4rem;
+  color: #f8e473;
   font-family: "DM Serif Display", ui-serif, Georgia, serif;
   letter-spacing: -0.05em;
-  opacity: 0;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   white-space: nowrap;
   text-transform: uppercase;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  mix-blend-mode: normal;
+  will-change: opacity, transform;
 }
 
-/* Image Layer */
-.splash-image-layer {
+/* Image Stack */
+.splash-image-stack {
   position: absolute;
+  inset: 0;
   z-index: 20;
-  width: 100%;
-  height: 100%;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .splash-image-wrapper {
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  position: absolute;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  will-change: opacity, transform;
+  border: 1px solid rgba(248, 228, 115, 0.2);
 }
 
 .splash-image {
@@ -78,64 +109,61 @@
   bottom: 3rem;
   left: 0;
   width: 100%;
-  padding: 0 2rem;
+  padding: 0 3rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   align-items: flex-end;
+  z-index: 50;
 }
 
 .splash-counter {
   font-family: ui-monospace, "SF Mono", Monaco, "Cascadia Mono", "Courier New", monospace;
-  color: #F8E473;
-  font-size: 0.875rem;
+  color: #f8e473;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.1em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .splash-progress-bar-bg {
   width: 100%;
   height: 2px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 9999px;
   overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .splash-progress-bar-fill {
   height: 100%;
-  background: #F8E473;
+  background: #f8e473;
   transform-origin: left center;
   transform: scaleX(0);
   will-change: transform;
+  box-shadow: 0 0 10px rgba(248, 228, 115, 0.5);
 }
 
 /* Responsive adjustments */
 @media (min-width: 768px) {
-  .splash-center-content {
-    width: 24rem;
-    height: 24rem;
-  }
-
   .splash-text {
-    font-size: 4.5rem;
+    font-size: 6rem;
   }
 
-  .splash-image-layer {
-    border-radius: 1rem;
-  }
-
-  .splash-progress-section {
-    padding: 0 3rem;
-  }
-
-  .splash-counter {
-    font-size: 1rem;
+  .splash-image-wrapper {
+    width: 22rem;
+    height: 22rem;
+    border-radius: 1.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .splash-text {
-    font-size: 5rem;
+    font-size: 8rem;
+  }
+  
+  .splash-image-wrapper {
+    width: 26rem;
+    height: 26rem;
   }
 }
-

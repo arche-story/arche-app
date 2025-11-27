@@ -5,129 +5,161 @@ import { gsap } from "gsap";
 import "./splash-screen.css";
 
 const SPLASH_IMAGES = [
-  "/logo/arche-logo.png",
   "/images/medeival_astronaut.png",
   "/images/archer.png",
-  "/images/swordsman.png",
-  "/images/woman.png",
   "/images/night_sky.png",
+  "/images/star_1.png",
+  "/images/cubes.png",
 ];
 
-const TYPOGRAPHY_SEQUENCE = ["ARCHE", "THE ORIGIN", "OF IDEAS"];
+const TYPOGRAPHY_SEQUENCE = ["ARCHE"];
 
 export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const textRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const imageLayerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const progressFillRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (!containerRef.current || !imageLayerRef.current) return;
-
-    const globalWindow =
-      typeof window !== "undefined"
-        ? (window as unknown as Record<string, unknown>)
-        : null;
-    const lenis = globalWindow?.lenis as
-      | { stop: () => void; start: () => void }
-      | undefined;
-
-    if (lenis?.stop) lenis.stop();
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        if (lenis?.start) lenis.start();
-        gsap.set(containerRef.current, { display: "none" });
-        if (onComplete) onComplete();
-      },
-    });
-
-    // Progress proxy object
-    const progress = { value: 0 };
-
-    // Step 1: Typography flash sequence (slower, more deliberate)
-    textRefs.current.forEach((textEl) => {
-      if (!textEl) return;
-      gsap.set(textEl, { opacity: 0 });
-      
-      tl.to(textEl, {
-        opacity: 1,
-        duration: 0.15,
-        ease: "power2.inOut",
-      })
-        .to(textEl, {
-          opacity: 1,
-          duration: 0.5,
-        })
-        .to(textEl, {
-          opacity: 0,
-          duration: 0.15,
-          ease: "power2.inOut",
-        }, "+=0.1");
-    });
-
-    // Step 2: Image stacking with random rotation (slower for better visibility)
-    const imageElements: HTMLDivElement[] = [];
-    SPLASH_IMAGES.forEach((src) => {
-      const imgWrapper = document.createElement("div");
-      imgWrapper.className = "splash-image-wrapper";
-      
-      const rotation = Math.random() * 8 - 4;
-      gsap.set(imgWrapper, {
-        position: "absolute",
-        inset: 0,
-        opacity: 0,
-        rotation: rotation,
-        scale: 0.92,
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.set(containerRef.current, { display: "none" });
+          if (onComplete) onComplete();
+        },
       });
 
-      const img = document.createElement("img");
-      img.src = src;
-      img.alt = "Loading";
-      img.className = "splash-image";
-      imgWrapper.appendChild(img);
-      imageLayerRef.current?.appendChild(imgWrapper);
-      imageElements.push(imgWrapper);
+      // Initial State
+      gsap.set(videoRef.current, { opacity: 0, scale: 1.1 });
+      gsap.set(".splash-text", { opacity: 0, y: 20 });
+      gsap.set(".splash-image-wrapper", { opacity: 0, scale: 0.8, y: 50 });
 
-      tl.to(imgWrapper, {
-        opacity: 1,
+      // Step 0: Video Fade In
+      tl.to(videoRef.current, {
+        opacity: 0.4, // Darker overlay for text readability
         scale: 1,
-        duration: 0.35,
+        duration: 2,
         ease: "power2.out",
       });
-    });
 
-    // Step 3: Progress bar synchronization
-    const contentDuration = tl.duration();
-    tl.to(progress, {
-      value: 100,
-      duration: contentDuration,
-      ease: "linear",
-      onUpdate: () => {
-        const percentage = Math.floor(progress.value);
-        if (counterRef.current) {
-          counterRef.current.textContent = `${percentage}%`;
-        }
-        if (progressFillRef.current) {
-          gsap.set(progressFillRef.current, {
-            scaleX: progress.value / 100,
-          });
-        }
-      },
-    }, 0);
+      // Progress Bar Animation (Runs throughout)
+      const totalDuration = 4.5;
+      tl.to(
+        progressFillRef.current,
+        {
+          scaleX: 1,
+          duration: totalDuration,
+          ease: "power1.inOut",
+        },
+        0
+      );
 
-    // Step 4: Curtain up reveal
-    tl.to(containerRef.current, {
-      yPercent: -100,
-      duration: 1.0,
-      ease: "power4.inOut",
-    });
+      // Counter Animation
+      const progress = { value: 0 };
+      tl.to(
+        progress,
+        {
+          value: 100,
+          duration: totalDuration,
+          ease: "power1.inOut",
+          onUpdate: () => {
+            if (counterRef.current) {
+              counterRef.current.textContent = `${Math.floor(progress.value)}%`;
+            }
+          },
+        },
+        0
+      );
 
-    return () => {
-      tl.kill();
-      imageElements.forEach((el) => el.remove());
-    };
+      // Step 1: Sequence - ARCHE Text and Images
+      const mainTimelineStart = 0.5;
+
+      // "ARCHE" - Appears and stays longer/dominates initial phase
+      tl.to(".splash-text-0", {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+      }, mainTimelineStart)
+      .to(".splash-text-0", {
+        opacity: 0,
+        y: -20,
+        filter: "blur(8px)",
+        duration: 0.5,
+        ease: "power2.in",
+      }, ">+0.5"); // Hold for 0.5s
+
+      // Image 1 (Astronaut) - Center
+      tl.to(".splash-image-0", {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        rotation: -2,
+        duration: 0.8,
+        ease: "power3.out",
+      }, ">-0.3")
+      .to(".splash-image-0", {
+        opacity: 0,
+        scale: 1.1,
+        filter: "blur(5px)",
+        duration: 0.5,
+      }, ">+0.4");
+
+      // Image 2 & 3 (Pair)
+      tl.to(".splash-image-1", {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        rotation: 3,
+        duration: 0.8,
+        ease: "power3.out",
+      }, ">-0.3")
+      .to(".splash-image-2", {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        rotation: -3,
+        duration: 0.8,
+        ease: "power3.out",
+      }, "<+0.2")
+      // Fade pair out
+      .to([".splash-image-1", ".splash-image-2"], {
+        opacity: 0,
+        y: -30,
+        duration: 0.5,
+      }, ">+0.3");
+
+      // Final Collage (Remaining Images)
+      tl.to(".splash-image-3", {
+        opacity: 0.8, // Slightly more visible as finale
+        scale: 1,
+        y: 0,
+        x: "-120%",
+        rotation: -5,
+        duration: 1,
+        ease: "power3.out",
+      }, "<")
+      .to(".splash-image-4", {
+        opacity: 0.8, // Slightly more visible as finale
+        scale: 1,
+        y: 0,
+        x: "120%",
+        rotation: 5,
+        duration: 1,
+        ease: "power3.out",
+      }, "<+0.2");
+
+      // Step 4: Curtain Reveal
+      tl.to(containerRef.current, {
+        yPercent: -100,
+        duration: 1.2,
+        ease: "power4.inOut",
+      }, ">+0.5");
+
+    }, containerRef); // Scope to container
+
+    return () => ctx.revert();
   }, [onComplete]);
 
   return (
@@ -136,25 +168,50 @@ export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
       className="splash-screen-kinetic"
       ref={containerRef}
     >
-      {/* Center Content */}
-      <div className="splash-center-content">
-        {/* Typography Layer */}
-        <div className="splash-typography-layer">
+      {/* Video Background Layer */}
+      <div className="splash-video-layer">
+        <video
+          ref={videoRef}
+          className="splash-bg-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          src="/video/splash-video.mp4"
+        />
+        <div className="splash-video-overlay" />
+      </div>
+
+      {/* Content Container */}
+      <div className="splash-content-container" ref={contentRef}>
+        
+        {/* Images Layer - Centered Stack */}
+        <div className="splash-image-stack">
+          {SPLASH_IMAGES.map((src, index) => (
+            <div
+              key={index}
+              className={`splash-image-wrapper splash-image-${index}`}
+              style={{
+                zIndex: 10 + index,
+              }}
+            >
+              <img src={src} alt="Visual" className="splash-image" />
+            </div>
+          ))}
+        </div>
+
+        {/* Typography Layer - Centered */}
+        <div className="splash-typography-stack">
           {TYPOGRAPHY_SEQUENCE.map((text, index) => (
             <div
               key={text}
-              ref={(el) => {
-                textRefs.current[index] = el;
-              }}
-              className="splash-text"
+              className={`splash-text splash-text-${index}`}
             >
               {text}
             </div>
           ))}
         </div>
 
-        {/* Image Layer */}
-        <div className="splash-image-layer" ref={imageLayerRef} />
       </div>
 
       {/* Progress Section */}
@@ -163,10 +220,7 @@ export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
           0%
         </div>
         <div className="splash-progress-bar-bg">
-          <div
-            className="splash-progress-bar-fill"
-            ref={progressFillRef}
-          />
+          <div className="splash-progress-bar-fill" ref={progressFillRef} />
         </div>
       </div>
     </div>

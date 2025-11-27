@@ -121,21 +121,19 @@ export function GallerySection() {
             />
           </div>
         </header>
-        
+
         <div className="mt-12 w-full h-[600px] rounded-3xl overflow-hidden bg-linear-to-br from-[#0C1B33]/50 via-[#1A3358]/30 to-[#0C1B33]/50 border border-white/10 relative">
-          <Lens zoomFactor={1.1} lensSize={200}>
-            <div className="w-full h-full">
-              <CircularGallery
-                items={galleryItems}
-                bend={3}
-                textColor="#F8E8B0"
-                borderRadius={0.05}
-                font="bold 24px serif"
-                scrollSpeed={2}
-                scrollEase={0.05}
-              />
-            </div>
-          </Lens>
+          <div className="w-full h-full">
+            <CircularGallery
+              items={galleryItems}
+              bend={3}
+              textColor="#F8E8B0"
+              borderRadius={0.05}
+              font="bold 24px serif"
+              scrollSpeed={2}
+              scrollEase={0.05}
+            />
+          </div>
         </div>
       </div>
     </section>

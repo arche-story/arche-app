@@ -86,9 +86,12 @@ export function QuoteSection({
   }, [quote, author]);
 
   return (
-    <div ref={sectionRef} className="relative mx-auto max-w-6xl px-6 py-16 md:px-8">
+    <div
+      ref={sectionRef}
+      className="relative mx-auto max-w-6xl px-6 py-16 md:px-8"
+    >
       {/* Meteors Background */}
-      <Meteors number={20} className="opacity-50" />
+      <Meteors number={20} className="overflow-x-hidden" />
 
       <NeonGradientCard
         className="relative z-10 items-center justify-center text-center"
@@ -104,7 +107,7 @@ export function QuoteSection({
           color="#F8E8B0"
           refresh
         />
-        
+
         <div className="relative z-10 flex flex-col items-center py-8 md:py-12">
           <div className="mb-6">
             <SplitText
@@ -119,10 +122,10 @@ export function QuoteSection({
               threshold={0.2}
             />
           </div>
-          
+
           <div ref={quoteRef} className="max-w-4xl px-4">
-            <AuroraText 
-              className="text-3xl md:text-5xl font-serif italic font-medium leading-tight" 
+            <AuroraText
+              className="text-3xl md:text-5xl font-serif italic font-medium leading-tight"
               colors={["#F8E8B0", "#F8E473", "#FFD700", "#FFF8D6"]}
             >
               &quot;{quote}&quot;
@@ -130,7 +133,10 @@ export function QuoteSection({
           </div>
 
           {author && (
-            <p ref={authorRef} className="mt-8 text-base text-slate-100/60 font-medium tracking-wide">
+            <p
+              ref={authorRef}
+              className="mt-8 text-base text-slate-100/60 font-medium tracking-wide"
+            >
               — {author}
             </p>
           )}

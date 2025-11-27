@@ -33,7 +33,7 @@ export function CreativeSequenceCard({
       y: 120,
       opacity: 0,
       scale: 0.85,
-      rotation: initialRotation,
+      rotation: initialRotation,  
       transformOrigin: "center center",
       force3D: true,
     });

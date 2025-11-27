@@ -39,7 +39,7 @@ export function HeroScroll() {
 
       const bounceWindow = () => {
         gsap.to(windowBg, {
-          x: gsap.utils.random(-30, 90),
+          x: gsap.utils.random(-30, 60),
           // y: gsap.utils.random(-30, 30),
           // rotation: gsap.utils.random(-2, 2),
           // scale: gsap.utils.random(1, 1.2),
