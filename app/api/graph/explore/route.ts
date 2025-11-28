@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       AND (toLower(a.prompt) CONTAINS toLower($query) OR $query = '')
       
       // Fetch the node details
-      WITH a
+      OPTIONAL MATCH (ownerUser:User)-[:CREATED]->(a)
       
       // Find optional relationships to parents (to build links)
       OPTIONAL MATCH (a)-[:REMIXED_FROM]->(parent:IPAsset)
@@ -25,6 +25,7 @@ export async function GET(request: Request) {
         a.imageUri as imageUri, 
         a.prompt as prompt, 
         a.createdAt as createdAt,
+        ownerUser.address as owner, // Return owner's address
         parent.id as parentId
       ORDER BY a.createdAt DESC
       LIMIT 100
@@ -47,6 +48,7 @@ export async function GET(request: Request) {
                 imageUri: record.get("imageUri"),
                 prompt: record.get("prompt"),
                 createdAt: record.get("createdAt"),
+                owner: record.get("owner"), // Include owner
                 // Simple heuristic: if it has a parent, it's a Remix, else Genesis
                 type: parentId ? "REMIX" : "GENESIS"
             });

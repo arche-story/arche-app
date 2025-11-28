@@ -6,6 +6,7 @@ export interface IPAsset {
   status?: 'DRAFT' | 'REGISTERED';
   type?: 'GENESIS' | 'REMIX';
   txHash?: string;
+  owner?: string; // Add owner property
 }
 
 export interface GraphNode extends IPAsset {

@@ -54,7 +54,12 @@ export function ProvenanceGraph({ data }: ProvenanceGraphProps) {
     data.nodes.forEach((node) => {
       if (node.imageUri && !images[node.id]) {
         const img = new Image();
-        img.src = node.imageUri;
+        // Resolve IPFS URI to Gateway URL
+        const src = node.imageUri.startsWith("ipfs://")
+            ? node.imageUri.replace("ipfs://", "https://ipfs.io/ipfs/")
+            : node.imageUri;
+            
+        img.src = src;
         img.crossOrigin = "Anonymous"; // Helper for some CORS issues
         newImages[node.id] = img;
       }

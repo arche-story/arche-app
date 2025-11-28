@@ -5,14 +5,15 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
 import { cn } from "@/lib/utils";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { useWallet } from "./wrapper/WalletProvider";
 import Link from "next/link";
-
-import { useWallet } from "@/components/wrapper/WalletProvider";
 
 const links = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Explore" },
   { href: "/studio", label: "Studio" },
+  { href: "/collection", label: "Collection" },
   { href: "/profile", label: "Profile" },
 ];
 
@@ -26,6 +27,7 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
   const isHomePage = pathname === "/";
   const shouldHideOnTop = revealOnScroll && isHomePage;
   const [scrollY, setScrollY] = useState(0);
+  const [showDisconnectDialog, setShowDisconnectDialog] = useState(false);
   const lenis = useLenis();
 
   useEffect(() => {
@@ -86,6 +88,11 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
   }, [lenis, shouldHideOnTop]);
 
   const isVisible = !shouldHideOnTop || scrollY > 40;
+
+  const handleDisconnect = () => {
+      setShowDisconnectDialog(false);
+      disconnectWallet();
+  };
 
   return (
     <header
@@ -156,7 +163,7 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
              </button>
          ) : (
              <button 
-                onClick={() => { if(window.confirm("Disconnect wallet?")) disconnectWallet() }} 
+                onClick={() => setShowDisconnectDialog(true)} 
                 className="ml-4 text-xs text-arche-gold/80 font-mono border border-arche-gold/10 rounded-full px-3 py-1 bg-arche-gold/5 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all cursor-pointer"
                 title="Click to disconnect"
              >
@@ -165,6 +172,16 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
          )}
         </nav>
       </div>
+
+      <ConfirmationDialog 
+        open={showDisconnectDialog} 
+        onOpenChange={setShowDisconnectDialog}
+        title="Disconnect Wallet" 
+        description="Are you sure you want to disconnect your wallet from Arche?" 
+        actionLabel="Disconnect" 
+        onAction={handleDisconnect}
+        variant="warning"
+      />
     </header>
   );
 }

@@ -37,7 +37,7 @@ export default function Page() {
       </div>
 
       <div className="overflow-x-hidden">
-        <section className="relative z-10 mx-auto max-w-6xl bg-arche-navy px-4 py-16">
+        <section className="relative z-10 mx-auto max-w-6xl  px-4 py-16">
           {/* Header */}
           <header className="section-header">
             <div className="mb-2">

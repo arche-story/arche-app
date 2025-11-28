@@ -49,21 +49,21 @@ We need to ensure Neo4j reflects the on-chain reality.
     - Create `(:IPAsset)` node.
     - Create `[:REMIXED_FROM]` relationship if it's a derivative.
 
-## 📝 Task Checklist
+## ✅ Completed Features
 
 ### Backend / Library (`lib/story/`)
-- [ ] `register-genesis.ts`: Implement `registerGenesisIP` function.
-- [ ] `register-derivative.ts`: Implement `registerDerivativeIP` function.
-- [ ] `license.ts`: Implement `mintLicenseToken` function.
+- [x] `register-genesis.ts`: Implement `registerGenesisIP` function with commercial and non-commercial PIL terms.
+- [x] `register-derivative.ts`: Implement `registerDerivativeIP` function with proper derivative workflow.
+- [x] `license.ts`: Implement `mintLicenseToken`, `mintCommercialRemixLicense`, and `mintNonCommercialLicense` functions.
 
 ### API Routes (`app/api/story/`)
-- [ ] `POST /api/story/register`: Update to handle both "Genesis" and "Remix" types.
+- [x] `POST /api/story/register`: Updated to handle both "Genesis" and "Remix" types.
     - If Genesis: Call `registerGenesisIP`.
-    - If Remix: Call `registerDerivativeIP`.
+    - If Remix: Call `registerDerivativeIP` and mint license tokens.
 
 ### Frontend (`app/studio/`)
-- [ ] **Studio UI:** Connect "Sign on Story" button to the new API route.
-- [ ] **Remix Mode:** Pass `parentIpId` to the API when in Remix mode.
+- [x] **Studio UI:** Connect "Sign on Story" button to the new API route.
+- [x] **Remix Mode:** Pass `parentIpId` to the API when in Remix mode with visual indicators.
 
 ## 🔗 Reference: Story Protocol Aeneid
 

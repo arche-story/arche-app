@@ -118,7 +118,7 @@ export function JoinCommunitySection() {
         },
       });
     } else {
-      router.push("/studio/new");
+      router.push("/studio");
     }
   };
 

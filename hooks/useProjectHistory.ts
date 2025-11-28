@@ -8,9 +8,10 @@ export interface Version {
   status?: string;
   prompt?: string;
   imageUri?: string;
+  name?: string; // Add name property
 }
 
-export function useProjectHistory(userAddress?: string, contextId?: string | null) {
+export function useProjectHistory(userAddress?: string, contextId?: string | null, limit?: number) {
   const [history, setHistory] = useState<Version[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -29,6 +30,9 @@ export function useProjectHistory(userAddress?: string, contextId?: string | nul
       if (contextId) {
           url += `&contextId=${contextId}`;
       }
+      if (limit) {
+          url += `&limit=${limit}`;
+      }
 
       const res = await fetch(url);
       if (!res.ok) return;
@@ -36,21 +40,25 @@ export function useProjectHistory(userAddress?: string, contextId?: string | nul
       const data = await res.json();
       
       if (data.versions) {
-        const formatted = data.versions.map((v: any) => ({
-          id: v.id,
-          label: v.name || v.label || "Untitled",
-          timestamp: new Date(v.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-          type: v.type || (v.status === 'DRAFT' ? 'DRAFT' : 'GENESIS'),
-          status: v.status,
-          prompt: v.prompt,
-          imageUri: v.imageUri
-        }));
+        const formatted = data.versions.map((v: any) => {
+          const displayLabel = (v.name && v.name !== "Untitled Asset") ? v.name : (v.prompt || "Untitled Draft");
+          return {
+            id: v.id,
+            label: displayLabel,
+            timestamp: new Date(v.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            type: v.type || (v.status === 'DRAFT' ? 'DRAFT' : 'GENESIS'),
+            status: v.status,
+            prompt: v.prompt,
+            imageUri: v.imageUri,
+            name: v.name // Include name in the formatted object
+          };
+        });
         setHistory(formatted);
       }
     } catch (e) {
       console.error("Failed to fetch history", e);
     }
-  }, [userAddress, contextId]);
+  }, [userAddress, contextId, limit]);
 
   const saveDraft = async (prompt: string, parentIpId?: string, versionOfId?: string, imageUrl?: string) => {
       if (!userAddress) return;
@@ -82,9 +90,26 @@ export function useProjectHistory(userAddress?: string, contextId?: string | nul
       }
   };
 
+  const deleteDraft = async (draftId: string) => {
+    if (!userAddress) return;
+    try {
+      const res = await fetch(`/api/studio/draft?id=${draftId}&userAddress=${userAddress}`, {
+        method: 'DELETE'
+      });
+      if (!res.ok) throw new Error("Failed to delete draft");
+      
+      // Update local state immediately
+      setHistory(prev => prev.filter(item => item.id !== draftId));
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
+
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
 
-  return { history, saveDraft, fetchHistory, loading };
+  return { history, saveDraft, deleteDraft, fetchHistory, loading };
 }

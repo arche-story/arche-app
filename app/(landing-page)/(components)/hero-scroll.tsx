@@ -157,7 +157,7 @@ export function HeroScroll() {
               below.
             </p>
             <Link
-              href="/studio/new"
+              href="/studio"
               onClick={handleStartCreating}
               ref={ctaRef}
               className="inline-flex rounded-full bg-yellow-300 px-6 py-2 text-sm font-medium text-slate-900! transition hover:bg-yellow-200 cursor-pointer"

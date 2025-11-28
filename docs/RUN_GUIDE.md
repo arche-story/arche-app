@@ -70,6 +70,13 @@ Create a `.env.local` file in the project root. You can copy `.env.example` if a
 NEXT_PUBLIC_SPG_NFT_CONTRACT=0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc
 NEXT_PUBLIC_RPC_PROVIDER_URL=https://aeneid.storyrpc.io
 
+# WIP (Wrapped IP) Token Address on Aeneid Testnet - REQUIRED for PIL terms
+# Official WIP token address for Aeneid Testnet
+NEXT_PUBLIC_WIP_TOKEN_ADDRESS=0x1514000000000000000000000000000000000000
+
+# License Template Address - REQUIRED for remix functionality
+NEXT_PUBLIC_LICENSE_TEMPLATE_ADDRESS=0x... # Get from deployed contracts doc
+
 # --- Wallet & Security ---
 # Private Key for Server-Side operations (Minting/Gas)
 # WARNING: Use a DEV wallet with NO real funds. Must have Aeneid Testnet $IP.

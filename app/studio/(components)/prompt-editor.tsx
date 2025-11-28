@@ -34,7 +34,7 @@ export function PromptEditor({
       <button
         onClick={onGenerate}
         disabled={isGenerating} // Disable button when generating
-        className="rounded-full bg-arche-gold px-6 py-2 text-sm font-medium text-arche-navy transition hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="rounded-full bg-arche-gold px-6 py-2 text-sm font-medium text-arche-navy dark:text-slate-900 transition hover:bg-yellow-200 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isGenerating ? "Painting..." : "Paint it"}
       </button>

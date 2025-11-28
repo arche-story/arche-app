@@ -40,6 +40,11 @@ The core lineage relationship. Connects a Derivative IP to its Parent IP.
     *   `royaltyPercent` (Integer): The commercial revenue share (e.g., 10).
     *   `remixType` (String): E.g., "Style Transfer", "Inpainting", "Upscale".
 
+### `(:IPAsset)-[:FORKED_FROM]->(:IPAsset)`
+Represents a "Soft Link" or "Inspiration" where the new asset used the prompt/seed of the parent but did not mint a formal license (Fork).
+*   **Properties:**
+    *   `timestamp` (DateTime): When the fork occurred.
+
 ### `(:IPAsset)-[:VERSION_OF]->(:IPAsset)`
 Used for tracking drafts or iterations that are not necessarily separate legal entities yet, or strict version control (like Git commits).
 *   **Properties:**
