@@ -5,6 +5,8 @@ import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import { useWallet } from "@/components/wrapper/WalletProvider";
+import { toast } from "sonner";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,6 +18,8 @@ export function HeroScroll() {
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
   const ctaRef = useRef<HTMLAnchorElement | null>(null);
   type CSSVarTween = gsap.TweenVars & { [key: string]: number | string };
+
+  const { account, connectWallet } = useWallet();
 
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
@@ -40,9 +44,6 @@ export function HeroScroll() {
       const bounceWindow = () => {
         gsap.to(windowBg, {
           x: gsap.utils.random(-30, 60),
-          // y: gsap.utils.random(-30, 30),
-          // rotation: gsap.utils.random(-2, 2),
-          // scale: gsap.utils.random(1, 1.2),
           duration: gsap.utils.random(4, 7),
           ease: "sine.inOut",
           onComplete: bounceWindow,
@@ -80,6 +81,18 @@ export function HeroScroll() {
 
     return () => ctx.revert();
   }, []);
+
+  const handleStartCreating = async (e: React.MouseEvent) => {
+    if (!account) {
+      e.preventDefault();
+      toast.info("Please connect your wallet to enter the studio", {
+        action: {
+          label: "Connect",
+          onClick: () => connectWallet(),
+        },
+      });
+    }
+  };
 
   return (
     <section
@@ -144,9 +157,10 @@ export function HeroScroll() {
               below.
             </p>
             <Link
-              href="/studio"
+              href="/studio/new"
+              onClick={handleStartCreating}
               ref={ctaRef}
-              className="inline-flex rounded-full bg-yellow-300 px-6 py-2 text-sm font-medium text-slate-900! transition hover:bg-yellow-200"
+              className="inline-flex rounded-full bg-yellow-300 px-6 py-2 text-sm font-medium text-slate-900! transition hover:bg-yellow-200 cursor-pointer"
             >
               Start creating
             </Link>

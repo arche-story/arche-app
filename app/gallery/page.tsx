@@ -21,7 +21,7 @@ export default function GalleryPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-4 pt-14 pb-10">
+      <main className="mx-auto max-w-6xl px-4 pt-8 pb-10">
         <SectionTitle
           eyebrow="Archive"
           title="My Arche"

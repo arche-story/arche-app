@@ -29,7 +29,7 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
   const shouldShowTransition = useCallback(
     (fromRoute: string, toRoute: string): boolean => {
       const baseRoute = "/";
-      const featureRoutes = ["/studio", "/timeline", "/gallery"];
+      const featureRoutes = ["/studio", "/gallery", "/profile", "/explore"];
 
       // Normalize routes to remove trailing slashes and query params
       const cleanFrom = fromRoute.split("?")[0].replace(/\/$/, "") || "/";
@@ -37,9 +37,9 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
 
       const isFromBase = cleanFrom === baseRoute;
       const isToBase = cleanTo === baseRoute;
-      
-      const isFromFeature = featureRoutes.some(r => cleanFrom.startsWith(r));
-      const isToFeature = featureRoutes.some(r => cleanTo.startsWith(r));
+
+      const isFromFeature = featureRoutes.some((r) => cleanFrom.startsWith(r));
+      const isToFeature = featureRoutes.some((r) => cleanTo.startsWith(r));
 
       // Case 1: Home to Feature -> Show Transition
       if (isFromBase && isToFeature) return true;
@@ -134,7 +134,7 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
       onComplete: () => {
         isTransitioningRef.current = false;
         // Reset layers for next time (optional, but good practice)
-        // setupGSAP(); 
+        // setupGSAP();
       },
     });
 
@@ -191,9 +191,9 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
 
     // If we just navigated (pathname changed), reveal the page
     if (previousPathname && previousPathname !== pathname) {
-       // Logic check could be added here if we only want transition on certain routes
-       // But since we triggered coverPage, we assume we want revealPage.
-       const timer = setTimeout(() => {
+      // Logic check could be added here if we only want transition on certain routes
+      // But since we triggered coverPage, we assume we want revealPage.
+      const timer = setTimeout(() => {
         revealPage();
       }, 50);
 

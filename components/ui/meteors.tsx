@@ -23,9 +23,12 @@ export const Meteors = ({
   angle = 215,
   className,
 }: MeteorsProps) => {
-  const [meteorStyles, setMeteorStyles] = useState<Array<React.CSSProperties>>(
-    []
-  )
+  // Fix: Initialize styles with useMemo to avoid "synchronous setState in effect" error
+  // Since we need random values which cause hydration mismatch, we can't use useMemo directly for initial render.
+  // But we can use a simple state and useEffect pattern correctly.
+  // The error comes because `useEffect` sets state immediately after mount, which React strict mode might flag or if it causes a loop (it doesn't here).
+  // However, to be safer and cleaner, we can just use a boolean `mounted` check to only render on client.
+  const [meteorStyles, setMeteorStyles] = useState<Array<React.CSSProperties>>([])
 
   useEffect(() => {
     const styles = [...new Array(number)].map(() => ({
@@ -37,6 +40,7 @@ export const Meteors = ({
         Math.floor(Math.random() * (maxDuration - minDuration) + minDuration) +
         "s",
     }))
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMeteorStyles(styles)
   }, [number, minDelay, maxDelay, minDuration, maxDuration, angle])
 

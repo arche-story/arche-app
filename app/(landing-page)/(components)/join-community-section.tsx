@@ -8,6 +8,10 @@ import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { cn } from "@/lib/utils";
+import { useWallet } from "@/components/wrapper/WalletProvider"; // Import useWallet
+import { toast } from "sonner"; // Import toast
+import { useRouter } from "next/navigation"; // Import useRouter
+import Link from "next/link"; // Added Link import
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,6 +20,9 @@ export function JoinCommunitySection() {
   const titleRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const confettiRef = useRef<ConfettiRef>(null);
+
+  const { account, connectWallet } = useWallet(); // Use wallet context
+  const router = useRouter(); // Initialize router
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -100,8 +107,19 @@ export function JoinCommunitySection() {
     };
   }, []);
 
-  const handleStartCreating = () => {
-    confettiRef.current?.fire({});
+  const handleStartCreating = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!account) {
+      confettiRef.current?.fire({}); // Still fire confetti for fun
+      toast.info("Please connect your wallet to enter the studio", {
+        action: {
+          label: "Connect",
+          onClick: () => connectWallet(),
+        },
+      });
+    } else {
+      router.push("/studio/new");
+    }
   };
 
   return (
@@ -118,7 +136,7 @@ export function JoinCommunitySection() {
       >
         <div className="w-full max-w-2xl flex flex-col gap-6 items-center">
           <div className="mb-2 text-center">
-            <p className="eyebrow-join text-yellow-300/70 text-sm tracking-widest uppercase">
+            <p className="eyebrow-join text-arche-gold/70 text-sm tracking-widest uppercase">
               GET STARTED
             </p>
           </div>
@@ -155,7 +173,7 @@ export function JoinCommunitySection() {
                 shimmerSize="0.1em"
                 borderRadius="9999px"
                 background="rgba(248, 232, 176, 0.1)"
-                onClick={handleStartCreating}
+                onClick={handleStartCreating} // Apply handler here
               >
                 <span className="whitespace-pre-wrap text-center text-base font-medium leading-none tracking-tight text-[#F8E8B0] dark:from-white dark:to-slate-900/10 lg:text-lg">
                   Start Creating
@@ -163,9 +181,9 @@ export function JoinCommunitySection() {
               </ShimmerButton>
             </div>
             
-            <button className="join-cta rounded-full border-2 border-yellow-300/30 px-8 py-3 text-base font-medium text-yellow-300 transition hover:border-yellow-200 hover:bg-yellow-300/10 whitespace-nowrap backdrop-blur-sm">
+            <Link href="/explore" className="join-cta rounded-full border-2 border-yellow-300/30 px-8 py-3 text-base font-medium text-yellow-300 transition hover:border-yellow-200 hover:bg-yellow-300/10 whitespace-nowrap backdrop-blur-sm">
               View Gallery
-            </button>
+            </Link>
           </div>
         </div>
       </div>

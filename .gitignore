@@ -42,3 +42,8 @@ next-env.d.ts
 
 # original images backup
 /public/images_original
+
+# Neo4j generated files
+neo4j/
+# docs
+# /docs

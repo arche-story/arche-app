@@ -76,87 +76,123 @@ export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
       const mainTimelineStart = 0.5;
 
       // "ARCHE" - Appears and stays longer/dominates initial phase
-      tl.to(".splash-text-0", {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power3.out",
-      }, mainTimelineStart)
-      .to(".splash-text-0", {
-        opacity: 0,
-        y: -20,
-        filter: "blur(8px)",
-        duration: 0.5,
-        ease: "power2.in",
-      }, ">+0.5"); // Hold for 0.5s
+      tl.to(
+        ".splash-text-0",
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+        },
+        mainTimelineStart
+      ).to(
+        ".splash-text-0",
+        {
+          opacity: 0,
+          y: -20,
+          filter: "blur(8px)",
+          duration: 0.5,
+          ease: "power2.in",
+        },
+        ">+0.5"
+      ); // Hold for 0.5s
 
       // Image 1 (Astronaut) - Center
-      tl.to(".splash-image-0", {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        rotation: -2,
-        duration: 0.8,
-        ease: "power3.out",
-      }, ">-0.3")
-      .to(".splash-image-0", {
-        opacity: 0,
-        scale: 1.1,
-        filter: "blur(5px)",
-        duration: 0.5,
-      }, ">+0.4");
+      tl.to(
+        ".splash-image-0",
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          rotation: -2,
+          duration: 0.8,
+          ease: "power3.out",
+        },
+        ">-0.3"
+      ).to(
+        ".splash-image-0",
+        {
+          opacity: 0,
+          scale: 1.1,
+          filter: "blur(5px)",
+          duration: 0.5,
+        },
+        ">+0.4"
+      );
 
       // Image 2 & 3 (Pair)
-      tl.to(".splash-image-1", {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        rotation: 3,
-        duration: 0.8,
-        ease: "power3.out",
-      }, ">-0.3")
-      .to(".splash-image-2", {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        rotation: -3,
-        duration: 0.8,
-        ease: "power3.out",
-      }, "<+0.2")
-      // Fade pair out
-      .to([".splash-image-1", ".splash-image-2"], {
-        opacity: 0,
-        y: -30,
-        duration: 0.5,
-      }, ">+0.3");
+      tl.to(
+        ".splash-image-1",
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          rotation: 3,
+          duration: 0.8,
+          ease: "power3.out",
+        },
+        ">-0.3"
+      )
+        .to(
+          ".splash-image-2",
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            rotation: -3,
+            duration: 0.8,
+            ease: "power3.out",
+          },
+          "<+0.2"
+        )
+        // Fade pair out
+        .to(
+          [".splash-image-1", ".splash-image-2"],
+          {
+            opacity: 0,
+            y: -30,
+            duration: 0.5,
+          },
+          ">+0.3"
+        );
 
       // Final Collage (Remaining Images)
-      tl.to(".splash-image-3", {
-        opacity: 0.8, // Slightly more visible as finale
-        scale: 1,
-        y: 0,
-        x: "-120%",
-        rotation: -5,
-        duration: 1,
-        ease: "power3.out",
-      }, "<")
-      .to(".splash-image-4", {
-        opacity: 0.8, // Slightly more visible as finale
-        scale: 1,
-        y: 0,
-        x: "120%",
-        rotation: 5,
-        duration: 1,
-        ease: "power3.out",
-      }, "<+0.2");
+      tl.to(
+        ".splash-image-3",
+        {
+          opacity: 0.8, // Slightly more visible as finale
+          scale: 1,
+          y: 0,
+          x: "-120%",
+          rotation: -5,
+          duration: 1,
+          ease: "power3.out",
+        },
+        "<"
+      ).to(
+        ".splash-image-4",
+        {
+          opacity: 0.8, // Slightly more visible as finale
+          scale: 1,
+          y: 0,
+          x: "120%",
+          rotation: 5,
+          duration: 1,
+          ease: "power3.out",
+        },
+        "<+0.2"
+      );
 
       // Step 4: Curtain Reveal
-      tl.to(containerRef.current, {
-        yPercent: -100,
-        duration: 1.2,
-        ease: "power4.inOut",
-      }, ">+0.5");
-
+      tl.to(
+        containerRef.current,
+        {
+          yPercent: -100,
+          duration: 1.2,
+          ease: "power4.inOut",
+        },
+        ">+0.5"
+      );
     }, containerRef); // Scope to container
 
     return () => ctx.revert();
@@ -184,7 +220,6 @@ export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
 
       {/* Content Container */}
       <div className="splash-content-container" ref={contentRef}>
-        
         {/* Images Layer - Centered Stack */}
         <div className="splash-image-stack">
           {SPLASH_IMAGES.map((src, index) => (
@@ -203,15 +238,11 @@ export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
         {/* Typography Layer - Centered */}
         <div className="splash-typography-stack">
           {TYPOGRAPHY_SEQUENCE.map((text, index) => (
-            <div
-              key={text}
-              className={`splash-text splash-text-${index}`}
-            >
+            <div key={text} className={`splash-text splash-text-${index}`}>
               {text}
             </div>
           ))}
         </div>
-
       </div>
 
       {/* Progress Section */}

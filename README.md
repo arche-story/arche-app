@@ -4,57 +4,69 @@
   <h1>Arche — The Origin of Every Idea</h1>
   
   <p>
-    Create, version, and register your AI-born ideas on-chain.
+    <strong>Trace the lineage of creativity. Register your AI-born assets as Programmable IP.</strong>
   </p>
 </div>
 
 ---
 
-## About
+## 🌌 The Vision
 
-**Arche** is a creative platform that allows artists and creators to generate AI art, preserve every version of their creative journey, and register their final pieces on-chain via Story Protocol. Inspired by Van Gogh's midnight blues and auric strokes, Arche remembers not just the art, but the journey that birthed it.
+**Arche** isn't just another AI image generator. It is a **provenance layer for creativity**. 
 
-> "We remember not only the art, but the journey that birthed it." — Arche
+Inspired by the chaotic yet structured strokes of Van Gogh, Arche recognizes that an artwork isn't just the final pixel—it's the prompt, the seed, the iterations, and the creative choices made along the way. We bridge the gap between ephemeral AI generation and permanent, verifiable ownership using **Story Protocol**.
 
-## Features
+> "We remember not only the art, but the journey that birthed it."
 
-### 🎨 **Studio**
-- AI-powered art generation from text prompts
-- Real-time preview of generated pieces
-- Save and version control for every iteration
+## ✨ Unique Value Proposition
 
-### 📜 **Timeline**
-- Track your complete creative journey
-- View all saved versions and drafts
-- See which pieces have been registered on-chain
+In the age of infinite reproduction, Arche restores value to the **origin**:
 
-### 🖼️ **Gallery**
-- Browse all your registered pieces
-- On-chain verification via Story Protocol
-- Permanent record of your authorship
+1.  **Provenance as First-Class Citizen**  
+    Unlike standard tools that discard your draft history, Arche visualizes your creative path. Using a graph-based data structure, we track every prompt mutation and variation, creating a genealogy of your artwork.
 
-### 🎭 **Creative Sequence**
-1. **Paint** — Describe your scene, mood, and emotion. Let AI render it in seconds.
-2. **Save** — Each variation is kept as a version in your timeline. No idea is ever lost.
-3. **Sign** — Register the final piece on Story Protocol and make your authorship verifiable.
+2.  **Programmable IP (Story Protocol Integration)**  
+    We don't just "save" images. We mint them as **IP Assets (IPA)** on-chain. This transforms your AI generations into liquid, programmable intellectual property that can be licensed, remixed, and monetized.
 
-## Tech Stack
+3.  **The Graph of Creation**  
+    Visualize the relationship between your assets. See how "Prompt A" evolved into "Masterpiece B". Your creative history is no longer a flat list, but a living, breathing network of ideas.
 
-- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
-- **UI Library:** [React 19](https://react.dev/)
-- **Language:** [TypeScript](https://www.typescriptlang.org/)
+## 🚀 Key Features
+
+### 🎨 **Studio & Canvas**
+- **Flow-State Interface:** An immersive environment designed for rapid iteration without distraction.
+- **AI-Native Tools:** Generate, refine, and mutate assets using state-of-the-art models.
+- **Context Awareness:** The system remembers previous iterations, allowing for coherent style evolution.
+
+### 🕸️ **Provenance Graph**
+- **Visual Lineage:** A node-based view showing the ancestry of every generated image.
+- **Non-Linear History:** Branch out your ideas without losing the original concept.
+- **Metadata Preservation:** Every version retains its prompt, model parameters, and seed.
+
+### 🛡️ **On-Chain Registry (Story Protocol)**
+- **One-Click Registration:** Seamlessly bridge your final selection to the blockchain.
+- **Verifiable Authorship:** Proof of creation timestamped and secured on Story Protocol.
+- **IP Licensing:** Set terms for how others can use or remix your work (Commercial, Non-Commercial, etc.).
+
+## ⚡ Tech Stack
+
+Arche is built with a modern, high-performance stack designed for scalability and smooth interaction.
+
+- **Frontend:** [Next.js 16](https://nextjs.org/) (App Router) & [React 19](https://react.dev/)
+- **IP Infrastructure:** [Story Protocol](https://www.story.foundation/)
+- **Database & Graph:** [Neo4j](https://neo4j.com/) (for handling complex provenance relationships)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Animations:** [GSAP](https://gsap.com/) with ScrollTrigger
-- **Smooth Scrolling:** [Lenis](https://lenis.studiofreight.com/)
-- **WebGL:** [OGL](https://github.com/oframe/ogl)
-- **Routing Transitions:** [next-transition-router](https://github.com/steven-tey/next-transition-router)
+- **Motion & 3D:** 
+  - [GSAP](https://gsap.com/) (ScrollTrigger & Animations)
+  - [Lenis](https://lenis.studiofreight.com/) (Smooth Scrolling)
+  - [OGL](https://github.com/oframe/ogl) (WebGL enhancements)
 
-## Getting Started
+## 🏁 Getting Started
 
 ### Prerequisites
 
-- Node.js 20+ 
-- npm, yarn, pnpm, or bun
+- Node.js 20+
+- Docker (for Neo4j local instance)
 
 ### Installation
 
@@ -67,78 +79,33 @@ cd arche-fe
 2. Install dependencies:
 ```bash
 npm install
-# or
-yarn install
-# or
-pnpm install
 ```
 
-3. Run the development server:
+3. Start the development server:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Open [http://localhost:3000](http://localhost:3000) to begin your journey.
 
-## Available Scripts
+## road
+## 🛣️ Roadmap
 
-- `npm run dev` — Start development server
-- `npm run build` — Build for production
-- `npm run start` — Start production server
-- `npm run lint` — Run ESLint
-- `npm run check` — Type check with TypeScript
-- `npm run compress-images` — Compress images in public folder
+- [x] **Core Studio Engine:** Prompt-to-image generation loop.
+- [x] **Graph Visualization:** Interactive provenance tree.
+- [ ] **Story Protocol Integration (Phase 2):**
+    - [ ] [See Phase 2 Integration Plan](docs/PHASE_2_INTEGRATION_PLAN.md)
+    - [ ] Genesis IP Minting (`mintAndRegisterIp`)
+    - [ ] License Tokenization (`mintLicenseTokens`)
+    - [ ] Derivative Registration (`registerDerivativeIp`)
+- [ ] **Community Gallery:** Remix and branch from other artists' public IP.
 
-## Project Structure
+## 🎨 Design Philosophy
 
-```
-arche-fe/
-├── app/
-│   ├── (landing-page)/     # Landing page with hero and sections
-│   ├── studio/              # AI art generation studio
-│   ├── gallery/             # Gallery of registered pieces
-│   ├── timeline/            # Creative journey timeline
-│   └── layout.tsx           # Root layout
-├── components/              # Reusable UI components
-│   ├── core/               # Core components (CircularGallery, TextPressure)
-│   └── wrapper/            # Client-side wrappers
-├── lib/                     # Utilities and helpers
-│   ├── animations/         # GSAP animations and route transitions
-│   └── utils.ts            # General utilities
-├── public/                  # Static assets
-│   ├── images/             # Image assets
-│   └── logo/               # Logo files
-└── scripts/                 # Build and utility scripts
-```
-
-## Development Status
-
-This project is currently in active development. Some features are still being implemented:
-
-- [ ] AI generation API integration
-- [ ] Local storage/API persistence for saved versions
-- [ ] Story Protocol SDK integration for on-chain registration
-- [ ] User authentication
-- [ ] Enhanced gallery features
-
-## Design Philosophy
-
-Arche's design is inspired by Van Gogh's artistic style:
-- **Midnight Blues** — Deep, rich blue gradients representing the creative night
-- **Auric Strokes** — Golden yellow accents symbolizing inspiration and creativity
-- **Journey Preservation** — Every draft and iteration is valued, not just the final piece
+Arche's aesthetic is a tribute to the post-impressionist spirit—merging the organic with the digital.
+- **Midnight Blues:** Represents the depth of the creative subconscious.
+- **Auric Strokes:** Symbolizes the spark of inspiration found in the noise.
 
 ## License
 
-Private project.
-
-## Acknowledgments
-
-- Inspired by Vincent van Gogh's artistic vision
-- Built with [Story Protocol](https://www.story.foundation/) for on-chain IP registration
+Private Project. All rights reserved.

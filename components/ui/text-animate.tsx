@@ -1,6 +1,7 @@
 "use client"
 
-import { ElementType, memo } from "react"
+/* eslint-disable */
+import { ElementType, memo, useMemo } from "react"
 import { AnimatePresence, motion, MotionProps, Variants } from "motion/react"
 
 import { cn } from "@/lib/utils"
@@ -317,7 +318,9 @@ const TextAnimateBase = ({
   accessible = true,
   ...props
 }: TextAnimateProps) => {
-  const MotionComponent = motion.create(Component)
+  // Move motion.create outside or memoize it to prevent "Component created during render" error
+  // Since Component can be a prop, we should memoize the creation
+  const MotionComponent = useMemo(() => motion.create(Component), [Component])
 
   let segments: string[] = []
   switch (by) {

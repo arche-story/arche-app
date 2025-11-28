@@ -7,11 +7,13 @@ import { useLenis } from "lenis/react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
+import { useWallet } from "@/components/wrapper/WalletProvider";
+
 const links = [
   { href: "/", label: "Home" },
+  { href: "/explore", label: "Explore" },
   { href: "/studio", label: "Studio" },
-  { href: "/timeline", label: "Timeline" },
-  { href: "/gallery", label: "My Arche" },
+  { href: "/profile", label: "Profile" },
 ];
 
 type SiteHeaderProps = {
@@ -20,6 +22,7 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
   const pathname = usePathname();
+  const { account, connectWallet, disconnectWallet, isConnecting } = useWallet();
   const isHomePage = pathname === "/";
   const shouldHideOnTop = revealOnScroll && isHomePage;
   const [scrollY, setScrollY] = useState(0);
@@ -127,7 +130,7 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
             origin of ideas
           </span>
         </Link>
-        <nav className="flex gap-3 text-sm text-slate-100/60">
+        <nav className="flex gap-3 text-sm text-slate-100/60 items-center">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -142,6 +145,24 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
               {link.label}
             </Link>
           ))}
+          
+          {!account ? (
+             <button 
+                onClick={connectWallet}
+                disabled={isConnecting}
+                className="ml-4 px-3 py-1 text-xs font-medium text-arche-gold border border-arche-gold/20 rounded-full hover:bg-arche-gold/10 transition-colors disabled:opacity-50"
+             >
+                {isConnecting ? "Connecting..." : "Connect Wallet"}
+             </button>
+         ) : (
+             <button 
+                onClick={() => { if(window.confirm("Disconnect wallet?")) disconnectWallet() }} 
+                className="ml-4 text-xs text-arche-gold/80 font-mono border border-arche-gold/10 rounded-full px-3 py-1 bg-arche-gold/5 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all cursor-pointer"
+                title="Click to disconnect"
+             >
+                {account.slice(0,6)}...{account.slice(-4)}
+             </button>
+         )}
         </nav>
       </div>
     </header>
