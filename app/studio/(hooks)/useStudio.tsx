@@ -40,8 +40,12 @@ export function useStudio() {
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
 
   // Editor State
-  const [committedPrompt, setCommittedPrompt] = useState(draftPromptParam || "");
-  const [committedImageUrl, setCommittedImageUrl] = useState<string | null>(null);
+  const [committedPrompt, setCommittedPrompt] = useState(
+    draftPromptParam || ""
+  );
+  const [committedImageUrl, setCommittedImageUrl] = useState<string | null>(
+    null
+  );
   const [stagedPrompt, setStagedPrompt] = useState(draftPromptParam || "");
   const [stagedTitle, setStagedTitle] = useState(""); // New State for Title
   const [stagedImageUrl, setStagedImageUrl] = useState<string | null>(null);
@@ -59,7 +63,8 @@ export function useStudio() {
   const [parentIpData, setParentIpData] = useState<any>(null);
   const [loadingParentData, setLoadingParentData] = useState(false);
 
-  const isDirty = stagedPrompt !== committedPrompt || stagedImageUrl !== committedImageUrl;
+  const isDirty =
+    stagedPrompt !== committedPrompt || stagedImageUrl !== committedImageUrl;
 
   // Initial Effect
   useEffect(() => {
@@ -106,7 +111,10 @@ export function useStudio() {
               try {
                 const metadataResponse = await fetch(
                   ipAsset.metadataUri.startsWith("ipfs://")
-                    ? ipAsset.metadataUri.replace("ipfs://", "https://ipfs.io/ipfs/")
+                    ? ipAsset.metadataUri.replace(
+                        "ipfs://",
+                        "https://ipfs.io/ipfs/"
+                      )
                     : ipAsset.metadataUri
                 );
                 const metadata = await metadataResponse.json();
@@ -117,10 +125,10 @@ export function useStudio() {
                 } else if (!stagedPrompt && metadata.prompt) {
                   setStagedPrompt(metadata.prompt);
                 }
-                
+
                 // Auto-fill title for remix if empty
                 if (!stagedTitle && metadata.title) {
-                    setStagedTitle(`Remix of ${metadata.title}`);
+                  setStagedTitle(`Remix of ${metadata.title}`);
                 }
               } catch (metadataError) {
                 setParentIpData(ipAsset);
@@ -141,11 +149,11 @@ export function useStudio() {
 
   const restoreVersion = (version: any) => {
     const promptText = version.prompt || "";
-    
+
     // Attempt to restore title from version
     // In useProjectHistory we map 'title' or 'name'
-    setStagedTitle(version.title || version.name || ""); 
-    
+    setStagedTitle(version.title || version.name || "");
+
     let imgUrl = null;
     if (version.imageUri) {
       let uri = version.imageUri;
@@ -160,11 +168,16 @@ export function useStudio() {
     setOutput(`[Opened] ${version.label}`);
   };
 
-  const handleDashboardSelect = (draftId: string, prompt: string, imageUrl?: string, title?: string) => {
+  const handleDashboardSelect = (
+    draftId: string,
+    prompt: string,
+    imageUrl?: string,
+    title?: string
+  ) => {
     setActiveDraftId(draftId);
     setStagedPrompt(prompt);
     setCommittedPrompt(prompt);
-    setStagedTitle(title || ""); 
+    setStagedTitle(title || "");
     let uri = imageUrl;
     if (uri?.startsWith("ipfs://"))
       uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
@@ -275,7 +288,10 @@ export function useStudio() {
           setCommittedPrompt(stagedPrompt);
           setCommittedImageUrl(stagedImageUrl);
           setActiveDraftId(newDraftId);
-          if (!parentIpId && (activeDraftId === "new" || activeDraftId !== newDraftId)) {
+          if (
+            !parentIpId &&
+            (activeDraftId === "new" || activeDraftId !== newDraftId)
+          ) {
             router.replace(`/studio/${newDraftId}`);
           }
           resolve(newDraftId);
@@ -320,7 +336,8 @@ export function useStudio() {
     const forkPromise = new Promise(async (resolve, reject) => {
       try {
         const metadata = {
-          title: stagedTitle || `Arche Fork: ${committedPrompt.substring(0, 30)}...`,
+          title:
+            stagedTitle || `Arche Fork: ${committedPrompt.substring(0, 30)}...`,
           description: committedPrompt,
           created_at: new Date().toISOString(),
           arche_type: "GENESIS",
@@ -329,17 +346,17 @@ export function useStudio() {
             prompt: committedPrompt,
             negative_prompt: "",
             seed: Math.floor(Math.random() * 100000000),
-            guidance_scale: 7.5
+            guidance_scale: 7.5,
           },
           parent_context: {
             parent_ip_id: parentIpId,
-            transformation_method: "fork"
+            transformation_method: "fork",
           },
           app_context: {
             version: "arche-v1.0",
-            engine: "arche-gen-engine"
+            engine: "arche-gen-engine",
           },
-          licenseType: "NON_COMMERCIAL"
+          licenseType: "NON_COMMERCIAL",
         };
 
         const requestBody = {
@@ -374,7 +391,12 @@ export function useStudio() {
       success: (data: any) => (
         <div>
           <p>Asset Forked Successfully!</p>
-          <a href={data.explorerUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-xs block mt-1">
+          <a
+            href={data.explorerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:underline text-xs block mt-1"
+          >
             View on StoryScan
           </a>
         </div>
@@ -404,8 +426,8 @@ export function useStudio() {
       return;
     }
     if (!stagedTitle) {
-        toast.warning("Please give your asset a name before registering.");
-        return;
+      toast.warning("Please give your asset a name before registering.");
+      return;
     }
     setShowRegisterDialog(true);
   }
@@ -426,17 +448,19 @@ export function useStudio() {
             prompt: committedPrompt,
             negative_prompt: "",
             seed: Math.floor(Math.random() * 100000000),
-            guidance_scale: 7.5
+            guidance_scale: 7.5,
           },
-          parent_context: parentIpId ? {
-            parent_ip_id: parentIpId,
-            transformation_method: "remix"
-          } : undefined,
+          parent_context: parentIpId
+            ? {
+                parent_ip_id: parentIpId,
+                transformation_method: "remix",
+              }
+            : undefined,
           app_context: {
             version: "arche-v1.0",
-            engine: "arche-gen-engine"
+            engine: "arche-gen-engine",
           },
-          licenseType: licenseParams.type
+          licenseType: licenseParams.type,
         };
 
         const requestBody = {
@@ -471,7 +495,12 @@ export function useStudio() {
         return (
           <div>
             <p>IP Registered Successfully!</p>
-            <a href={data.explorerUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-xs block mt-1">
+            <a
+              href={data.explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline text-xs block mt-1"
+            >
               View on StoryScan
             </a>
           </div>
@@ -484,22 +513,47 @@ export function useStudio() {
       await registrationPromise;
     } catch (e: any) {
       console.error(e);
-      if (parentIpId && (e.message.includes("Not enough IP tokens") || e.message.includes("payment") || e.message.includes("fee"))) {
-         toast.custom((t) => (
-             <div className="bg-slate-900 border border-red-500/50 p-4 rounded-lg shadow-xl flex flex-col gap-3 w-full max-w-md">
-                 <div className="flex items-start gap-3">
-                     <div className="text-red-400 font-bold shrink-0">⚠️ Remix Failed</div>
-                     <div className="text-sm text-slate-300">{e.message}</div>
-                 </div>
-                 <div className="text-xs text-slate-400">
-                     You can &quot;Fork&quot; this asset instead. It will be registered as a new Genesis IP (Non-Commercial) without paying the parent fee, but will still be linked as an inspiration.
-                 </div>
-                 <div className="flex gap-2 justify-end">
-                     <button onClick={() => toast.dismiss(t)} className="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Cancel</button>
-                     <button onClick={() => { toast.dismiss(t); handleFork(); }} className="px-3 py-1.5 text-xs bg-arche-gold text-slate-900 font-bold rounded hover:bg-white transition-colors">Fork Asset</button>
-                 </div>
-             </div>
-         ), { duration: 15000 });
+      if (
+        parentIpId &&
+        (e.message.includes("Not enough IP tokens") ||
+          e.message.includes("payment") ||
+          e.message.includes("fee"))
+      ) {
+        toast.custom(
+          (t) => (
+            <div className="bg-slate-900 border border-red-500/50 p-4 rounded-lg shadow-xl flex flex-col gap-3 w-full max-w-md">
+              <div className="flex items-start gap-3">
+                <div className="text-red-400 font-bold shrink-0">
+                  ⚠️ Remix Failed
+                </div>
+                <div className="text-sm text-slate-300">{e.message}</div>
+              </div>
+              <div className="text-xs text-slate-400">
+                You can &quot;Fork&quot; this asset instead. It will be
+                registered as a new Genesis IP (Non-Commercial) without paying
+                the parent fee, but will still be linked as an inspiration.
+              </div>
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={() => toast.dismiss(t)}
+                  className="px-3 py-1.5 text-xs text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    toast.dismiss(t);
+                    handleFork();
+                  }}
+                  className="px-3 py-1.5 text-xs bg-arche-gold text-slate-900 font-bold rounded hover:bg-white transition-colors"
+                >
+                  Fork Asset
+                </button>
+              </div>
+            </div>
+          ),
+          { duration: 15000 }
+        );
       }
     } finally {
       setIsRegistering(false);
@@ -541,14 +595,19 @@ export function useStudio() {
     loadingParentData,
     handleImageLoad,
     // Dialog states
-    showBackDialog, setShowBackDialog,
-    showGenerateDialog, setShowGenerateDialog,
-    showCommitDialog, setShowCommitDialog,
-    showRegisterDialog, setShowRegisterDialog,
-    showRevertDialog, setShowRevertDialog,
+    showBackDialog,
+    setShowBackDialog,
+    showGenerateDialog,
+    setShowGenerateDialog,
+    showCommitDialog,
+    setShowCommitDialog,
+    showRegisterDialog,
+    setShowRegisterDialog,
+    showRevertDialog,
+    setShowRevertDialog,
     // Wallet & User
     account,
     connectWallet,
-    userProfile
+    userProfile,
   };
 }
