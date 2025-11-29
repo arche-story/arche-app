@@ -48,8 +48,3 @@ neo4j/
 # docs
 # /docs
 
-
-# ai configs
-/.qwen/
-/.claude
-/.factory
