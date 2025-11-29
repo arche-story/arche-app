@@ -2,9 +2,17 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { GraphData } from "@/types";
+import { useWallet } from "@/components/wrapper/WalletProvider";
+
+export type FilterType = "ALL" | "GENESIS" | "REMIX" | "MINE";
+export type SortType = "NEWEST" | "OLDEST" | "POPULAR";
 
 export function useExplore() {
+  const { account } = useWallet();
   const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<FilterType>("ALL");
+  const [sort, setSort] = useState<SortType>("NEWEST");
+  
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
     links: [],
@@ -15,13 +23,18 @@ export function useExplore() {
   const fetchAssets = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/graph/explore?q=${query}`);
+      const params = new URLSearchParams();
+      if (query) params.set("q", query);
+      params.set("filter", filter);
+      params.set("sort", sort);
+      if (account) params.set("owner", account);
+
+      const res = await fetch(`/api/graph/explore?${params.toString()}`);
       const data = await res.json();
-      // The API now returns { nodes: [], links: [] }
+      
       if (data.nodes) {
         setGraphData(data);
       } else if (data.assets) {
-        // Fallback for older API response structure if mixed
         setGraphData({ nodes: data.assets, links: [] });
       }
     } catch (e) {
@@ -29,7 +42,7 @@ export function useExplore() {
     } finally {
       setLoading(false);
     }
-  }, [query]);
+  }, [query, filter, sort, account]);
 
   // Debounced Search
   useEffect(() => {
@@ -50,6 +63,10 @@ export function useExplore() {
   return {
     query,
     setQuery,
+    filter,
+    setFilter,
+    sort,
+    setSort,
     graphData,
     loading,
     viewMode,

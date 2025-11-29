@@ -1,11 +1,11 @@
 "use client";
 
 import { SiteHeader } from "@/components/site-header";
-import { PromptEditor } from "@/app/studio/(components)/prompt-editor";
-import { AIOutputPanel } from "@/app/studio/(components)/ai-output-panel";
-import { VersionHistory } from "@/components/studio/VersionHistory";
-import { AssetConfig } from "@/components/studio/AssetConfig";
-import { StudioDashboard } from "@/app/studio/(components)/studio-dashboard";
+import { PromptEditor } from "@/app/studio/(components)/PromptEditor";
+import { AIOutputPanel } from "@/app/studio/(components)/AIOutputPanel";
+import { VersionHistory } from "@/app/studio/(components)/VersionHistory";
+import { AssetConfig } from "@/app/studio/(components)/AssetConfig";
+import { StudioDashboard } from "@/app/studio/(components)/StudioDashboard";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { ArrowLeft } from "lucide-react";
 import { useStudio } from "@/app/studio/(hooks)/useStudio";
@@ -30,6 +30,8 @@ export function StudioMain() {
     confirmRevert,
     stagedPrompt,
     setStagedPrompt,
+    stagedTitle,
+    setStagedTitle,
     stagedImageUrl,
     output,
     licenseParams,
@@ -107,6 +109,8 @@ export function StudioMain() {
             <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full relative z-10 pb-20">
               <div className="space-y-6">
                 <PromptEditor
+                  title={stagedTitle}
+                  onTitleChange={setStagedTitle}
                   value={stagedPrompt}
                   onChange={setStagedPrompt}
                   onGenerate={handleGenerate}

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Settings2, Info, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LicenseSelector } from "@/components/studio/LicenseSelector";
+import { LicenseSelector } from "@/app/studio/(components)/LicenseSelector";
 import { LicenseParams } from "@/types/license";
 
 interface AssetConfigProps {

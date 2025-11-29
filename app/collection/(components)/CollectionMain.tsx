@@ -200,7 +200,10 @@ export function CollectionMain() {
                     <div className="p-4 flex-1 flex flex-col justify-between bg-[#0F213E] group-hover:bg-[#132745] transition-colors">
                         <div>
                             <h3 className="font-semibold text-white truncate text-sm mb-1" title={item.label}>{item.label || "Untitled"}</h3>
-                            <p className="text-xs text-white/40 font-mono">{new Date(item.createdAt).toLocaleDateString()}</p>
+                            {item.prompt && item.label !== item.prompt && (
+                                <p className="text-xs text-white/40 line-clamp-2 mb-2">{item.prompt}</p>
+                            )}
+                            <p className="text-[10px] text-white/30 font-mono">{new Date(item.createdAt).toLocaleDateString()}</p>
                         </div>
                         
                         {activeTab === "verified" && (

@@ -13,13 +13,16 @@ Represents a creator or collector interacting with the platform.
 
 ### `IPAsset`
 Represents a registered Intellectual Property on Story Protocol.
-*   **Properties:**
-    *   `id` (String, PK): The Story Protocol IP ID (e.g., `0x123...`).
-    *   `imageUri` (String): IPFS URI of the image.
-    *   `metadataUri` (String): IPFS URI of the metadata (Proof of Creation).
-    *   `txHash` (String): Transaction hash of the mint/registration.
-    *   `createdAt` (DateTime): Timestamp of creation.
-    *   `isRoot` (Boolean): True if this is a Genesis asset (no parent).
+    properties:
+      id: String (Unique ID / Contract Address)
+      title: String (Name of the asset)
+      prompt: String (The text prompt used to generate)
+      imageUri: String (IPFS URI or URL)
+      createdAt: DateTime
+      status: StringEnum ('DRAFT', 'REGISTERED')
+      txHash: String (Optional, transaction hash of registration)
+
+
 
 ## Relationships
 

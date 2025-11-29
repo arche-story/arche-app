@@ -10,7 +10,7 @@ import { UserProfile } from "@/hooks/useUserProfile";
 interface StudioDashboardProps {
   history: Version[];
   userProfile?: UserProfile | null;
-  onSelectDraft: (draftId: string, prompt: string, imageUrl?: string) => void;
+  onSelectDraft: (draftId: string, prompt: string, imageUrl?: string, title?: string) => void;
   onNewProject: () => void;
   onRemixAsset?: (ipId: string) => void;
 }
@@ -90,7 +90,7 @@ export function StudioDashboard({ history, userProfile, onSelectDraft, onNewProj
                             </button>
                         ) : (
                             <button 
-                                onClick={() => onSelectDraft(item.id, item.prompt || "", item.imageUri)}
+                                onClick={() => onSelectDraft(item.id, item.prompt || "", item.imageUri, item.title || item.name)}
                                 className="px-4 py-2 rounded-full bg-arche-gold text-slate-900 font-bold text-sm hover:bg-white transition-colors flex items-center gap-2"
                             >
                                 <Edit className="w-4 h-4" /> Resume

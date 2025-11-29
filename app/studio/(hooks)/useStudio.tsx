@@ -43,6 +43,7 @@ export function useStudio() {
   const [committedPrompt, setCommittedPrompt] = useState(draftPromptParam || "");
   const [committedImageUrl, setCommittedImageUrl] = useState<string | null>(null);
   const [stagedPrompt, setStagedPrompt] = useState(draftPromptParam || "");
+  const [stagedTitle, setStagedTitle] = useState(""); // New State for Title
   const [stagedImageUrl, setStagedImageUrl] = useState<string | null>(null);
   const [output, setOutput] = useState<string | null>(null);
 
@@ -71,6 +72,7 @@ export function useStudio() {
     } else {
       setActiveDraftId(null);
       setIsNewProject(false);
+      setStagedTitle(""); // Reset Title
     }
   }, [routeId, remixIdParam]);
 
@@ -115,6 +117,11 @@ export function useStudio() {
                 } else if (!stagedPrompt && metadata.prompt) {
                   setStagedPrompt(metadata.prompt);
                 }
+                
+                // Auto-fill title for remix if empty
+                if (!stagedTitle && metadata.title) {
+                    setStagedTitle(`Remix of ${metadata.title}`);
+                }
               } catch (metadataError) {
                 setParentIpData(ipAsset);
               }
@@ -134,6 +141,11 @@ export function useStudio() {
 
   const restoreVersion = (version: any) => {
     const promptText = version.prompt || "";
+    
+    // Attempt to restore title from version
+    // In useProjectHistory we map 'title' or 'name'
+    setStagedTitle(version.title || version.name || ""); 
+    
     let imgUrl = null;
     if (version.imageUri) {
       let uri = version.imageUri;
@@ -148,10 +160,11 @@ export function useStudio() {
     setOutput(`[Opened] ${version.label}`);
   };
 
-  const handleDashboardSelect = (draftId: string, prompt: string, imageUrl?: string) => {
+  const handleDashboardSelect = (draftId: string, prompt: string, imageUrl?: string, title?: string) => {
     setActiveDraftId(draftId);
     setStagedPrompt(prompt);
     setCommittedPrompt(prompt);
+    setStagedTitle(title || ""); 
     let uri = imageUrl;
     if (uri?.startsWith("ipfs://"))
       uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
@@ -168,6 +181,7 @@ export function useStudio() {
   const handleReset = useCallback(() => {
     setStagedPrompt("");
     setCommittedPrompt("");
+    setStagedTitle("");
     setStagedImageUrl(null);
     setCommittedImageUrl(null);
     setOutput(null);
@@ -252,6 +266,7 @@ export function useStudio() {
         const targetId = activeDraftId === "new" ? undefined : activeDraftId;
         const newDraftId = await saveDraft(
           stagedPrompt,
+          stagedTitle, // Pass title
           parentIpId || undefined,
           targetId || undefined,
           stagedImageUrl || undefined
@@ -305,7 +320,7 @@ export function useStudio() {
     const forkPromise = new Promise(async (resolve, reject) => {
       try {
         const metadata = {
-          title: `Arche Fork: ${committedPrompt.substring(0, 50)}...`,
+          title: stagedTitle || `Arche Fork: ${committedPrompt.substring(0, 30)}...`,
           description: committedPrompt,
           created_at: new Date().toISOString(),
           arche_type: "GENESIS",
@@ -347,7 +362,7 @@ export function useStudio() {
         if (!res.ok) throw new Error(data.error || "Failed to fork IP.");
 
         handleReset();
-        router.push("/profile");
+        router.push("/collection");
         resolve(data);
       } catch (error) {
         reject(error);
@@ -388,6 +403,10 @@ export function useStudio() {
       connectWallet();
       return;
     }
+    if (!stagedTitle) {
+        toast.warning("Please give your asset a name before registering.");
+        return;
+    }
     setShowRegisterDialog(true);
   }
 
@@ -398,7 +417,7 @@ export function useStudio() {
     const registrationPromise = new Promise(async (resolve, reject) => {
       try {
         const metadata = {
-          title: `Arche AI Art: ${committedPrompt.substring(0, 50)}...`,
+          title: stagedTitle,
           description: committedPrompt,
           created_at: new Date().toISOString(),
           arche_type: parentIpId ? "REMIX" : "GENESIS",
@@ -439,7 +458,7 @@ export function useStudio() {
         if (!res.ok) throw new Error(data.error || "Failed to register IP.");
 
         handleReset();
-        router.push("/profile");
+        router.push("/collection");
         resolve(data);
       } catch (error) {
         reject(error);
@@ -506,6 +525,8 @@ export function useStudio() {
     confirmRevert,
     stagedPrompt,
     setStagedPrompt,
+    stagedTitle, // Return title
+    setStagedTitle, // Return setter
     stagedImageUrl,
     setStagedImageUrl,
     output,

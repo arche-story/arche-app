@@ -36,7 +36,7 @@ export async function GET(request: Request) {
         if (!status && !searchParams.has("page")) {
              const query = `
                 MATCH (u:User {address: $userAddress})-[:CREATED]->(a:IPAsset)
-                RETURN a.id as id, a.status as status, a.createdAt as createdAt, a.prompt as prompt, a.imageUri as imageUri, a.txHash as txHash, a.name as name
+                RETURN a.id as id, a.status as status, a.createdAt as createdAt, a.prompt as prompt, a.imageUri as imageUri, a.txHash as txHash, a.name as name, a.title as title
                 ORDER BY a.createdAt DESC
             `;
             const res = await tx.run(query, { userAddress });
@@ -52,7 +52,8 @@ export async function GET(request: Request) {
                     prompt: record.get('prompt'),
                     imageUri: record.get('imageUri'),
                     txHash: record.get('txHash'),
-                    name: record.get('name')
+                    name: record.get('name'),
+                    title: record.get('title')
                 };
 
                 if (item.status === 'REGISTERED') {
@@ -90,6 +91,7 @@ export async function GET(request: Request) {
                 a.imageUri as imageUri, 
                 a.txHash as txHash, 
                 a.name as name,
+                a.title as title,
                 EXISTS((u)-[:FAVORITED]->(a)) as isFavorited
             ORDER BY a.createdAt DESC
             SKIP toInteger($skip) LIMIT toInteger($limit)
@@ -100,10 +102,19 @@ export async function GET(request: Request) {
 
         const dataRes = await tx.run(dataQuery, { userAddress, status, skip, limit });
         const items = dataRes.records.map((record: Record) => {
+            const title = record.get('title');
             const name = record.get('name');
             const prompt = record.get('prompt');
-            // If name is the default "Untitled Asset", prefer the prompt for display
-            const displayLabel = (name && name !== "Untitled Asset") ? name : (prompt || "Untitled Asset");
+            
+            // Label logic: Title > Name > Prompt > "Untitled Asset"
+            // Also filter out generic "Untitled Asset" names if title/prompt is better
+            let displayLabel = title;
+            if (!displayLabel && name && name !== "Untitled Asset") {
+                displayLabel = name;
+            }
+            if (!displayLabel) {
+                displayLabel = prompt || "Untitled Asset";
+            }
 
             return {
                 id: record.get('id'),
@@ -113,6 +124,7 @@ export async function GET(request: Request) {
                 imageUri: record.get('imageUri'),
                 txHash: record.get('txHash'),
                 name: name,
+                title: title,
                 label: displayLabel, // Use the smarter label logic
                 isFavorited: record.get('isFavorited')
             };

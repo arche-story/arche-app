@@ -356,9 +356,14 @@ export function ProfileMain() {
                                         Registered IP
                                     </div>
                                     <h3 className="text-white text-base font-bold truncate mb-1 shadow-black drop-shadow-md">
-                                        {asset.label || asset.name || "Untitled Asset"}
+                                        {asset.label || asset.title || asset.name || "Untitled Asset"}
                                     </h3>
-                                    <p className="text-white/60 text-xs line-clamp-1 mb-4 font-mono">
+                                    {asset.prompt && asset.label !== asset.prompt && (
+                                        <p className="text-white/70 text-xs line-clamp-2 mb-2 drop-shadow-md">
+                                            {asset.prompt}
+                                        </p>
+                                    )}
+                                    <p className="text-white/40 text-[10px] line-clamp-1 mb-4 font-mono">
                                         {asset.id}
                                     </p>
                                     

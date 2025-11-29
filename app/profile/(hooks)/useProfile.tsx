@@ -12,7 +12,8 @@ type Asset = {
   createdAt: string;
   txHash?: string;
   name?: string;
-  label?: string; // Added label
+  title?: string; // Added title
+  label?: string; 
   status: string;
 };
 

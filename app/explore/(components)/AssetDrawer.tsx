@@ -24,6 +24,12 @@ export function AssetDrawer({ asset, isOpen, onClose }: AssetDialogProps) {
     return uri;
   };
 
+  const shortenAddress = (addr: string) => {
+    if (!addr) return "Unknown";
+    if (addr.length < 10) return addr;
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
@@ -45,7 +51,7 @@ export function AssetDrawer({ asset, isOpen, onClose }: AssetDialogProps) {
                   {asset.type}
                 </span>
                 <Dialog.Title className="text-lg font-bold text-white truncate max-w-[200px] sm:max-w-md">
-                    {asset.prompt}
+                    {asset.title || asset.prompt}
                 </Dialog.Title>
             </div>
             <Dialog.Close asChild>
@@ -81,6 +87,7 @@ export function AssetDrawer({ asset, isOpen, onClose }: AssetDialogProps) {
                         <button
                             onClick={() => navigator.clipboard.writeText(asset.id)}
                             className="bg-white/5 border border-white/10 text-white py-2 rounded-lg text-xs flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                            title={asset.id}
                         >
                             <Copy className="w-3.5 h-3.5" />
                             Copy ID
@@ -115,7 +122,9 @@ export function AssetDrawer({ asset, isOpen, onClose }: AssetDialogProps) {
                         </div>
                         <div className="flex justify-between py-2 border-b border-white/5">
                             <span className="text-xs text-white/40">Owner</span>
-                            <span className="text-xs text-white font-mono truncate max-w-[150px]">{asset.owner || "Unknown"}</span>
+                            <span className="text-xs text-white font-mono truncate max-w-[150px]" title={asset.owner}>
+                                {shortenAddress(asset.owner)}
+                            </span>
                         </div>
                         <div className="flex justify-between py-2 border-b border-white/5">
                             <span className="text-xs text-white/40">License</span>

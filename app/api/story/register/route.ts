@@ -210,7 +210,8 @@ export async function POST(req: NextRequest) {
       licenseTermsId: activeLicenseTermsId || "1",
       metadataUri: ipMetadataUri,
       imageUrl: ipfsImageUri,
-      name: metadata.name || "Untitled Asset",
+      title: metadata.title || metadata.name || "Untitled Asset",
+      prompt: metadata.description || "", // Ensure prompt/description is saved if available
       recipient: recipient,
       parentId: parentId || forkedFrom || null,
       status: "REGISTERED",
@@ -228,7 +229,7 @@ export async function POST(req: NextRequest) {
                 ip.licenseTermsId = $licenseTermsId, // Store the license terms ID
                 ip.metadataUri = $metadataUri,
                 ip.imageUri = $imageUrl,
-                ip.name = $name,
+                ip.title = $title,
                 ip.status = $status
             RETURN ip
         `;
@@ -258,6 +259,8 @@ export async function POST(req: NextRequest) {
             CREATE (ip:IPAsset {
                 id: $ipId,
                 licenseTermsId: $licenseTermsId, // Store the license terms ID
+                title: $title,
+                prompt: $prompt,
                 imageUri: $imageUrl,
                 metadataUri: $metadataUri,
                 txHash: $txHash,

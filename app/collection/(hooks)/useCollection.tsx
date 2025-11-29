@@ -12,6 +12,8 @@ interface CollectionItem {
   imageUri: string;
   label: string;
   isFavorited?: boolean;
+  title?: string; // Added title
+  name?: string; // Added name
 }
 
 export function useCollection() {

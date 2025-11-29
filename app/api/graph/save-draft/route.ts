@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const session = await getGraphSession();
   try {
     const body = await request.json();
-    const { prompt, imageUri, parentIpId, versionOfId, userAddress } = body;
+    const { prompt, title, imageUri, parentIpId, versionOfId, userAddress } = body;
 
     const draftId = `draft_${uuidv4()}`;
     const timestamp = new Date().toISOString();
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
                 id: $draftId,
                 status: 'DRAFT',
                 prompt: $prompt,
+                title: $title,
                 imageUri: $imageUri,
                 createdAt: $timestamp,
                 isRoot: $isRoot
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
         await tx.run(createQuery, {
             draftId,
             prompt,
+            title: title || "Untitled Draft",
             imageUri: imageUri || "", 
             timestamp,
             isRoot: !parentIpId,

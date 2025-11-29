@@ -34,7 +34,7 @@ export async function GET(request: Request) {
                 // Ensure ownership
                 WHERE (u)-[:CREATED]->(related)
                 
-                RETURN related.id as id, related.status as status, related.createdAt as createdAt, related.prompt as prompt, related.imageUri as imageUri, related.name as name
+                RETURN related.id as id, related.status as status, related.createdAt as createdAt, related.prompt as prompt, related.imageUri as imageUri, related.title as title
                 ORDER BY related.createdAt DESC
                 LIMIT toInteger($limit)
             `;
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
                 WHERE NOT EXISTS {
                     MATCH (u)-[:CREATED]->(:IPAsset)-[:VERSION_OF]->(a)
                 }
-                RETURN a.id as id, a.status as status, a.createdAt as createdAt, a.prompt as prompt, a.imageUri as imageUri, a.name as name
+                RETURN a.id as id, a.status as status, a.createdAt as createdAt, a.prompt as prompt, a.imageUri as imageUri, a.title as title
                 ORDER BY a.createdAt DESC
                 LIMIT toInteger($limit)
             `;
@@ -62,7 +62,8 @@ export async function GET(request: Request) {
             createdAt: record.get('createdAt'),
             label: record.get('status') === 'DRAFT' ? `Draft: ${record.get('prompt')?.substring(0, 15)}...` : 'Registered IP',
             prompt: record.get('prompt'),
-            imageUri: record.get('imageUri')
+            imageUri: record.get('imageUri'),
+            title: record.get('title') // Return title
         }));
     });
 

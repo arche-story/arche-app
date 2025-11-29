@@ -23,6 +23,7 @@ interface ProvenanceGraphProps {
 export function ProvenanceGraph({ data }: ProvenanceGraphProps) {
   const graphRef = useRef<ForceGraphMethods | undefined>(undefined);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [hoverNode, setHoverNode] = useState<GraphNode | null>(null);
   const [containerDimensions, setContainerDimensions] = useState({
     width: 800,
     height: 600,
@@ -56,9 +57,9 @@ export function ProvenanceGraph({ data }: ProvenanceGraphProps) {
         const img = new Image();
         // Resolve IPFS URI to Gateway URL
         const src = node.imageUri.startsWith("ipfs://")
-            ? node.imageUri.replace("ipfs://", "https://ipfs.io/ipfs/")
-            : node.imageUri;
-            
+          ? node.imageUri.replace("ipfs://", "https://ipfs.io/ipfs/")
+          : node.imageUri;
+
         img.src = src;
         img.crossOrigin = "Anonymous"; // Helper for some CORS issues
         newImages[node.id] = img;
@@ -80,6 +81,13 @@ export function ProvenanceGraph({ data }: ProvenanceGraphProps) {
     }
   };
 
+  // Check if a link is connected to the highlighted node
+  const isLinkActive = (link: any) => {
+    const nodeId = hoverNode?.id || selectedNode?.id;
+    if (!nodeId) return false;
+    return link.source.id === nodeId || link.target.id === nodeId;
+  };
+
   return (
     <div
       ref={containerRef}
@@ -90,13 +98,16 @@ export function ProvenanceGraph({ data }: ProvenanceGraphProps) {
         width={containerDimensions.width}
         height={containerDimensions.height}
         graphData={data}
-        nodeLabel="prompt"
+        nodeLabel="title"
         backgroundColor="#050c19"
-        linkColor={() => "#F8E473"} // Arche Gold
-        linkWidth={1.5}
-        linkDirectionalParticles={2}
-        linkDirectionalParticleWidth={2}
+        
+        // Link Styling
+        linkColor={(link) => isLinkActive(link) ? "#F8E473" : "#ffffff20"}
+        linkWidth={(link) => isLinkActive(link) ? 2 : 1}
+        linkDirectionalParticles={(link) => isLinkActive(link) ? 4 : 0}
+        linkDirectionalParticleWidth={3}
         linkDirectionalParticleSpeed={0.005}
+        
         // Custom Node Rendering
         nodeCanvasObject={(
           nodeObj: object,
@@ -107,65 +118,92 @@ export function ProvenanceGraph({ data }: ProvenanceGraphProps) {
           if (node.x === undefined || node.y === undefined) return;
 
           const size = 8;
-          const r = size;
+          const isHovered = node.id === hoverNode?.id;
+          const isSelected = node.id === selectedNode?.id;
+          const isRemix = node.type === "REMIX";
 
-          // Draw Image (Clipped Circle)
+          // Draw Shape
           ctx.save();
           ctx.beginPath();
-          ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
+
+          if (isRemix) {
+            // Rounded Rect for Remix
+            const r = size;
+            // @ts-ignore - roundRect exists in modern browsers
+            if (ctx.roundRect) {
+                 // @ts-ignore
+                ctx.roundRect(node.x - r, node.y - r, r * 2, r * 2, 4);
+            } else {
+                ctx.rect(node.x - r, node.y - r, r * 2, r * 2);
+            }
+          } else {
+            // Circle for Genesis
+            ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
+          }
+          
           ctx.clip();
 
           const img = images[node.id];
           if (img && img.complete && img.naturalWidth !== 0) {
             try {
-              // Cast to CanvasImageSource to satisfy TypeScript
-              // HTMLImageElement is a valid CanvasImageSource
               ctx.drawImage(
                 img as unknown as CanvasImageSource,
-                node.x - r,
-                node.y - r,
-                r * 2,
-                r * 2
+                node.x - size,
+                node.y - size,
+                size * 2,
+                size * 2
               );
             } catch {
-              // Fallback color if image fails to draw (CORS usually)
-              ctx.fillStyle = node.type === "GENESIS" ? "#a855f7" : "#3b82f6";
+              ctx.fillStyle = isRemix ? "#3b82f6" : "#a855f7";
               ctx.fill();
             }
           } else {
-            ctx.fillStyle = node.type === "GENESIS" ? "#a855f7" : "#3b82f6";
+            ctx.fillStyle = isRemix ? "#3b82f6" : "#a855f7";
             ctx.fill();
           }
           ctx.restore();
 
-          // Draw Border (Gold for Remix, White/Purple for Genesis)
+          // Draw Border
           ctx.beginPath();
-          ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
-          ctx.lineWidth = 1.5 / globalScale;
+          if (isRemix) {
+             const r = size;
+              // @ts-ignore
+             if (ctx.roundRect) {
+                 // @ts-ignore
+                 ctx.roundRect(node.x - r, node.y - r, r * 2, r * 2, 4);
+             } else {
+                 ctx.rect(node.x - r, node.y - r, r * 2, r * 2);
+             }
+          } else {
+             ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
+          }
+
+          ctx.lineWidth = (isSelected || isHovered ? 2 : 1.5) / globalScale;
           ctx.strokeStyle =
-            node.id === selectedNode?.id
+            isSelected || isHovered
               ? "#F8E473"
-              : node.type === "REMIX"
-              ? "#F8E473"
-              : "#ffffff40";
+              : isRemix
+              ? "#3b82f6aa"
+              : "#a855f7aa";
           ctx.stroke();
 
-          // Draw Label on Hover or Selection
-          // Only show text if scale is high enough
-          if (globalScale > 2 || node.id === selectedNode?.id) {
+          // Draw Label
+          if (globalScale > 2.5 || isSelected || isHovered) {
+            const labelText = node.title || node.prompt;
             const label =
-              node.prompt?.length > 15
-                ? node.prompt.substring(0, 15) + "..."
-                : node.prompt;
-            const fontSize = 3;
+              labelText?.length > 15
+                ? labelText.substring(0, 15) + "..."
+                : labelText;
+            const fontSize = isHovered ? 4 : 3;
             ctx.font = `${fontSize}px Sans-Serif`;
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillStyle = "white";
-            ctx.fillText(label, node.x, node.y + r + fontSize + 2);
+            ctx.fillStyle = isHovered ? "#F8E473" : "white";
+            ctx.fillText(label, node.x, node.y + size + fontSize + 2);
           }
         }}
         onNodeClick={handleNodeClick}
+        onNodeHover={(node) => setHoverNode(node ? node as GraphNode : null)}
         cooldownTicks={100}
       />
 
@@ -178,16 +216,16 @@ export function ProvenanceGraph({ data }: ProvenanceGraphProps) {
       {/* Legend Overlay */}
       <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur px-3 py-2 rounded-lg border border-white/10 text-[10px] text-white/70 space-y-1 pointer-events-none">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-          <span>Genesis Asset</span>
+          <div className="w-2 h-2 rounded-full bg-purple-500 border border-purple-300/50"></div>
+          <span>Genesis (Circle)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-          <span>Remix Asset</span>
+          <div className="w-2 h-2 rounded-sm bg-blue-500 border border-blue-300/50"></div>
+          <span>Remix (Square)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-8 h-[1px] bg-[#F8E473]"></div>
-          <span>Remix Link</span>
+          <span>Link</span>
         </div>
       </div>
     </div>

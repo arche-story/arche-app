@@ -8,7 +8,8 @@ export interface Version {
   status?: string;
   prompt?: string;
   imageUri?: string;
-  name?: string; // Add name property
+  name?: string; 
+  title?: string; // Add title property
 }
 
 export function useProjectHistory(userAddress?: string, contextId?: string | null, limit?: number) {
@@ -41,7 +42,12 @@ export function useProjectHistory(userAddress?: string, contextId?: string | nul
       
       if (data.versions) {
         const formatted = data.versions.map((v: any) => {
-          const displayLabel = (v.name && v.name !== "Untitled Asset") ? v.name : (v.prompt || "Untitled Draft");
+          // Prefer title, fallback to name (old data), then prompt
+          const displayTitle = v.title || v.name;
+          const displayLabel = (displayTitle && displayTitle !== "Untitled Draft" && displayTitle !== "Untitled Asset") 
+            ? displayTitle 
+            : (v.prompt || "Untitled Draft");
+            
           return {
             id: v.id,
             label: displayLabel,
@@ -50,7 +56,8 @@ export function useProjectHistory(userAddress?: string, contextId?: string | nul
             status: v.status,
             prompt: v.prompt,
             imageUri: v.imageUri,
-            name: v.name // Include name in the formatted object
+            name: v.name,
+            title: v.title // Map title
           };
         });
         setHistory(formatted);
@@ -60,7 +67,7 @@ export function useProjectHistory(userAddress?: string, contextId?: string | nul
     }
   }, [userAddress, contextId, limit]);
 
-  const saveDraft = async (prompt: string, parentIpId?: string, versionOfId?: string, imageUrl?: string) => {
+  const saveDraft = async (prompt: string, title?: string, parentIpId?: string, versionOfId?: string, imageUrl?: string) => {
       if (!userAddress) return;
       setLoading(true);
       try {
@@ -69,6 +76,7 @@ export function useProjectHistory(userAddress?: string, contextId?: string | nul
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 prompt,
+                title,
                 userAddress,
                 parentIpId,
                 versionOfId,

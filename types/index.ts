@@ -1,5 +1,6 @@
 export interface IPAsset {
   id: string;
+  title?: string; // Asset Title (e.g. "Cyber Samurai")
   prompt: string;
   imageUri: string;
   createdAt: string;
