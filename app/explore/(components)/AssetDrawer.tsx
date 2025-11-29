@@ -122,8 +122,8 @@ export function AssetDrawer({ asset, isOpen, onClose }: AssetDialogProps) {
                         </div>
                         <div className="flex justify-between py-2 border-b border-white/5">
                             <span className="text-xs text-white/40">Owner</span>
-                            <span className="text-xs text-white font-mono truncate max-w-[150px]" title={asset.owner}>
-                                {shortenAddress(asset.owner)}
+                            <span className="text-xs text-white font-mono truncate max-w-[150px]" title={asset.owner || "Unknown"}>
+                                {shortenAddress(asset.owner || "Unknown")}
                             </span>
                         </div>
                         <div className="flex justify-between py-2 border-b border-white/5">

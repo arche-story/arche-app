@@ -306,9 +306,38 @@ export function ProfileMain() {
         </div>
 
         {/* Favorites Section */}
-        <div className="mt-12">
+        {/* Tab Navigation */}
+        <div className="mt-12 flex justify-center md:justify-start mb-8">
+          <div className="inline-flex p-1 bg-white/5 rounded-xl border border-white/10">
+            <button
+              onClick={() => setActiveTab("FAVORITES")}
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                activeTab === "FAVORITES"
+                  ? "bg-arche-gold text-slate-900"
+                  : "text-white/60 hover:text-white hover:bg-white/5"
+              )}
+            >
+              Favorites
+            </button>
+            <button
+              onClick={() => setActiveTab("MY_LISTINGS")}
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                activeTab === "MY_LISTINGS"
+                  ? "bg-arche-gold text-slate-900"
+                  : "text-white/60 hover:text-white hover:bg-white/5"
+              )}
+            >
+              My Listings
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        <div className="mt-6">
             <h2 className="text-2xl font-bold text-white tracking-tight mb-6 text-center md:text-left">
-                My Favorites
+                {activeTab === "FAVORITES" ? "My Favorites" : "My Listings"}
             </h2>
             {assetsLoading ? (
             <div className="w-full py-20 flex flex-col items-center justify-center gap-4 text-arche-gold/50 animate-pulse">
@@ -318,11 +347,21 @@ export function ProfileMain() {
             ) : items.length === 0 ? (
                 <div className="col-span-full flex flex-col items-center justify-center py-20 text-white/30 border border-dashed border-white/10 rounded-2xl bg-white/5">
                     <div className="mb-4 opacity-50">
-                        <Heart className="w-12 h-12" />
+                        {activeTab === "MY_LISTINGS" ? (
+                            <FileEdit className="w-12 h-12" />
+                        ) : (
+                            <Heart className="w-12 h-12" />
+                        )}
                     </div>
-                    <p className="text-sm">No favorite items found.</p>
+                    <p className="text-sm">
+                        {activeTab === "MY_LISTINGS"
+                          ? "You have no listings yet."
+                          : "No favorite items found."}
+                    </p>
                     <p className="text-xs mt-2 max-w-xs text-center leading-relaxed">
-                        Favorite IPs from the Explore or Gallery pages will appear here.
+                        {activeTab === "MY_LISTINGS"
+                          ? "List your IP assets for sale in your collection."
+                          : "Favorite IPs from the Explore or Gallery pages will appear here."}
                     </p>
                 </div>
             ) : (
@@ -351,38 +390,90 @@ export function ProfileMain() {
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#0b1628] via-transparent to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
                                 
                                 <div className="absolute bottom-0 left-0 w-full p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                                    <div className="flex items-center gap-1.5 text-arche-gold text-[10px] font-bold uppercase tracking-widest mb-2">
-                                        <ShieldCheck className="w-3.5 h-3.5" />
-                                        Registered IP
-                                    </div>
-                                    <h3 className="text-white text-base font-bold truncate mb-1 shadow-black drop-shadow-md">
-                                        {asset.label || asset.title || asset.name || "Untitled Asset"}
-                                    </h3>
-                                    {asset.prompt && asset.label !== asset.prompt && (
-                                        <p className="text-white/70 text-xs line-clamp-2 mb-2 drop-shadow-md">
-                                            {asset.prompt}
-                                        </p>
+                                    {activeTab === "MY_LISTINGS" ? (
+                                        // Listing-specific display
+                                        <>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-1.5 text-arche-gold text-[10px] font-bold uppercase tracking-widest">
+                                                    <FileEdit className="w-3.5 h-3.5" />
+                                                    Listed for Sale
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="text-arche-gold text-sm font-bold">{asset.status}</div>
+                                                    <div className="text-white/50 text-[10px]">Status</div>
+                                                </div>
+                                            </div>
+                                            <h3 className="text-white text-base font-bold truncate mb-1 shadow-black drop-shadow-md mt-2">
+                                                {asset.label || asset.title || asset.name || "Untitled Asset"}
+                                            </h3>
+
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <div className="text-arche-gold font-bold text-sm">
+                                                    {asset.price ? `${asset.price} WIP` : "Price not set"}
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        // Favorites display
+                                        <>
+                                            <div className="flex items-center gap-1.5 text-arche-gold text-[10px] font-bold uppercase tracking-widest mb-2">
+                                                <ShieldCheck className="w-3.5 h-3.5" />
+                                                Registered IP
+                                            </div>
+                                            <h3 className="text-white text-base font-bold truncate mb-1 shadow-black drop-shadow-md">
+                                                {asset.label || asset.title || asset.name || "Untitled Asset"}
+                                            </h3>
+                                            {asset.prompt && asset.label !== asset.prompt && (
+                                                <p className="text-white/70 text-xs line-clamp-2 mb-2 drop-shadow-md">
+                                                    {asset.prompt}
+                                                </p>
+                                            )}
+                                        </>
                                     )}
                                     <p className="text-white/40 text-[10px] line-clamp-1 mb-4 font-mono">
                                         {asset.id}
                                     </p>
-                                    
+
                                     <div className="grid grid-cols-2 gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
-                                        <Link
-                                            href={`/studio/new?remix=${asset.id}`}
-                                            className="flex items-center justify-center gap-2 w-full bg-white/10 backdrop-blur text-white py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-white hover:text-arche-navy transition-colors"
-                                        >
-                                            Remix
-                                        </Link>
-                                        <a
-                                            href={`https://aeneid.storyscan.xyz/address/${asset.id}`}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="flex items-center justify-center gap-2 w-full bg-arche-gold text-arche-navy dark:text-slate-900 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-white hover:text-slate-900 transition-colors"
-                                        >
-                                            Scan
-                                            <ExternalLink className="w-3 h-3" />
-                                        </a>
+                                        {activeTab === "MY_LISTINGS" ? (
+                                            // Listing-specific actions
+                                            <>
+                                                <button
+                                                    className="flex items-center justify-center gap-2 w-full bg-white/10 backdrop-blur text-white py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-white hover:text-arche-navy transition-colors cursor-not-allowed"
+                                                    disabled
+                                                >
+                                                    View Listing
+                                                </button>
+                                                <a
+                                                    href={`https://aeneid.storyscan.xyz/address/${asset.id}`}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="flex items-center justify-center gap-2 w-full bg-arche-gold text-arche-navy dark:text-slate-900 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-white hover:text-slate-900 transition-colors"
+                                                >
+                                                    Scan
+                                                    <ExternalLink className="w-3 h-3" />
+                                                </a>
+                                            </>
+                                        ) : (
+                                            // Favorites-specific actions
+                                            <>
+                                                <Link
+                                                    href={`/studio/new?remix=${asset.id}`}
+                                                    className="flex items-center justify-center gap-2 w-full bg-white/10 backdrop-blur text-white py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-white hover:text-arche-navy transition-colors"
+                                                >
+                                                    Remix
+                                                </Link>
+                                                <a
+                                                    href={`https://aeneid.storyscan.xyz/address/${asset.id}`}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="flex items-center justify-center gap-2 w-full bg-arche-gold text-arche-navy dark:text-slate-900 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-white hover:text-slate-900 transition-colors"
+                                                >
+                                                    Scan
+                                                    <ExternalLink className="w-3 h-3" />
+                                                </a>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>

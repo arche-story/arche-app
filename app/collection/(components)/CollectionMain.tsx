@@ -2,11 +2,13 @@
 
 import { SiteHeader } from "@/components/site-header";
 import { cn } from "@/lib/utils";
-import { Trash2, Loader2, Edit, ExternalLink, ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import { Trash2, Loader2, Edit, ExternalLink, ChevronLeft, ChevronRight, Heart, Tag } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useCollection } from "@/app/collection/(hooks)/useCollection";
+import { ListingModal } from "@/components/marketplace/ListingModal";
 
 export function CollectionMain() {
   const router = useRouter();
@@ -27,6 +29,8 @@ export function CollectionMain() {
     handleConfirmDelete,
     toggleFavorite
   } = useCollection();
+
+  const [listingAsset, setListingAsset] = useState<{ id: string; title: string } | null>(null);
 
   if (!account) {
     return (
@@ -170,9 +174,16 @@ export function CollectionMain() {
                                     </button>
                                     <button 
                                         onClick={() => router.push(`/studio/new?remix=${item.id}`)}
-                                        className="px-4 py-2 rounded-full bg-arche-gold text-slate-900 font-bold text-sm hover:bg-white transition-colors"
+                                        className="p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors"
+                                        title="Remix"
                                     >
-                                        Remix
+                                        <Edit className="w-5 h-5 text-white" />
+                                    </button>
+                                    <button 
+                                        onClick={() => setListingAsset({ id: item.id, title: item.label || "Untitled Asset" })}
+                                        className="px-4 py-2 rounded-full bg-arche-gold text-slate-900 font-bold text-sm hover:bg-white transition-colors flex items-center gap-2"
+                                    >
+                                        <Tag className="w-4 h-4" /> Sell
                                     </button>
                                 </>
                             ) : (
@@ -243,6 +254,15 @@ export function CollectionMain() {
         )}
 
       </main>
+
+      {listingAsset && (
+        <ListingModal
+          isOpen={!!listingAsset}
+          onClose={() => setListingAsset(null)}
+          assetId={listingAsset.id}
+          assetTitle={listingAsset.title}
+        />
+      )}
     </div>
   );
 }

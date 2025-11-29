@@ -29,7 +29,13 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
   const shouldShowTransition = useCallback(
     (fromRoute: string, toRoute: string): boolean => {
       const baseRoute = "/";
-      const featureRoutes = ["/studio", "/gallery", "/profile", "/explore"];
+      const featureRoutes = [
+        "/studio",
+        "/collection",
+        "/profile",
+        "/explore",
+        "/marketplace",
+      ];
 
       // Normalize routes to remove trailing slashes and query params
       const cleanFrom = fromRoute.split("?")[0].replace(/\/$/, "") || "/";

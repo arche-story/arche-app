@@ -1,61 +1,68 @@
-# Graph Schema Strategy
+# Graph Database Schema
 
-This document outlines the Neo4j graph schema for Arche Story, the "GitHub for AI Art". The schema is designed to track the provenance, licensing, and version history of IP Assets.
+This document defines the Neo4j schema used to track IP Assets, Users, Provenance, and Marketplace Listings.
 
-## Nodes (Labels)
+## Nodes
 
-### `User`
-Represents a creator or collector interacting with the platform.
-*   **Properties:**
-    *   `address` (String, PK): Ethereum wallet address.
-    *   `username` (String, Optional): ENS name or custom alias.
-    *   `createdAt` (DateTime): When the user first interacted.
+### `(:User)`
+Represents a wallet address interacting with the protocol.
+- `address`: String (PK, Wallet Address)
+- `username`: String (Optional, Display Name)
+- `bio`: String (Optional)
+- `avatarUri`: String (Optional, IPFS URI)
+- `createdAt`: DateTime
 
-### `IPAsset`
-Represents a registered Intellectual Property on Story Protocol.
-    properties:
-      id: String (Unique ID / Contract Address)
-      title: String (Name of the asset)
-      prompt: String (The text prompt used to generate)
-      imageUri: String (IPFS URI or URL)
-      createdAt: DateTime
-      status: StringEnum ('DRAFT', 'REGISTERED')
-      txHash: String (Optional, transaction hash of registration)
+### `(:IPAsset)`
+Represents a registered IP Asset (Genesis or Derivative).
+- `id`: String (PK, Story Protocol IP ID / Contract Address)
+- `title`: String (Asset Name)
+- `prompt`: String (AI Generation Prompt)
+- `imageUri`: String (IPFS URI)
+- `metadataUri`: String (IPFS URI to full JSON metadata)
+- `txHash`: String (Registration Transaction Hash)
+- `status`: StringEnum ('DRAFT', 'REGISTERED')
+- `createdAt`: DateTime
+- `isRoot`: Boolean (True if Genesis, False if Remix)
+- `licenseTermsId`: String (ID of the attached license terms)
 
-
+### `(:Listing)`
+Represents an active or historical sell order in the marketplace.
+- `id`: String (PK, Unique Listing ID, usually UUID)
+- `price`: String (Price in WIP/USDC e.g., "100")
+- `currency`: String (Token Address e.g., WIP Address)
+- `status`: StringEnum ('ACTIVE', 'SOLD', 'CANCELLED')
+- `createdAt`: DateTime
+- `updatedAt`: DateTime
 
 ## Relationships
 
-### `(:User)-[:OWNS]->(:IPAsset)`
-Indicates current ownership of the IP Asset.
-*   **Properties:**
-    *   `since` (DateTime): When the ownership started.
+### Ownership & Creation
+- `(:User)-[:CREATED]->(:IPAsset)`: The original creator of the asset.
+- `(:User)-[:OWNS]->(:IPAsset)`: The current owner of the asset (Updated on transfer/sale). *Note: For simplicity in early versions, we might infer ownership via CREATED if no transfer logic exists, but for Marketplace we must track OWNS explicitly.*
 
-### `(:User)-[:CREATED]->(:IPAsset)`
-Indicates the original creator (minter) of the IP Asset. This link is permanent even if ownership changes.
-*   **Properties:**
-    *   `timestamp` (DateTime): When the creation occurred.
+### Lineage (Provenance)
+- `(:IPAsset)-[:REMIXED_FROM]->(:IPAsset)`: The child asset is a derivative of the parent.
+- `(:IPAsset)-[:FORKED_FROM]->(:IPAsset)`: The child is an unauthorized fork (genesis pointing to inspiration).
+- `(:IPAsset)-[:VERSION_OF]->(:IPAsset)`: Used for drafts/versions before registration.
 
-### `(:IPAsset)-[:REMIXED_FROM]->(:IPAsset)`
-The core lineage relationship. Connects a Derivative IP to its Parent IP.
-*   **Properties:**
-    *   `licenseTokenId` (String): The ID of the license token used.
-    *   `royaltyPercent` (Integer): The commercial revenue share (e.g., 10).
-    *   `remixType` (String): E.g., "Style Transfer", "Inpainting", "Upscale".
+### Social
+- `(:User)-[:FAVORITED]->(:IPAsset)`: User liked an asset.
 
-### `(:IPAsset)-[:FORKED_FROM]->(:IPAsset)`
-Represents a "Soft Link" or "Inspiration" where the new asset used the prompt/seed of the parent but did not mint a formal license (Fork).
-*   **Properties:**
-    *   `timestamp` (DateTime): When the fork occurred.
+### Marketplace
+- `(:User)-[:LISTED]->(:Listing)`: User created a sell order.
+- `(:Listing)-[:SELLS]->(:IPAsset)`: The listing is selling this specific asset.
+- `(:User)-[:BOUGHT {price: "...", txHash: "..."}]->(:Listing)`: Historical record of who bought the listing.
 
-### `(:IPAsset)-[:VERSION_OF]->(:IPAsset)`
-Used for tracking drafts or iterations that are not necessarily separate legal entities yet, or strict version control (like Git commits).
-*   **Properties:**
-    *   `commitMessage` (String): Description of changes.
-    *   `version` (String): Semver or sequential ID (v1, v2).
+## Queries Example
 
-## Indexes & Constraints
+**Get Active Marketplace Listings:**
+```cypher
+MATCH (seller:User)-[:LISTED]->(l:Listing {status: 'ACTIVE'})-[:SELLS]->(asset:IPAsset)
+RETURN l, asset, seller
+```
 
-*   **Constraint:** `User.address` must be unique.
-*   **Constraint:** `IPAsset.id` must be unique.
-*   **Index:** `IPAsset.createdAt` for timeline queries.
+**Buy Asset Logic:**
+1. Create BOUGHT relationship.
+2. Set Listing status to SOLD.
+3. Delete old OWNS relationship.
+4. Create new OWNS relationship for Buyer.

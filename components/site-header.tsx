@@ -9,14 +9,6 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useWallet } from "./wrapper/WalletProvider";
 import Link from "next/link";
 
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/explore", label: "Explore" },
-  { href: "/studio", label: "Studio" },
-  { href: "/collection", label: "Collection" },
-  { href: "/profile", label: "Profile" },
-];
-
 type SiteHeaderProps = {
   revealOnScroll?: boolean;
 };
@@ -28,6 +20,7 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
   const shouldHideOnTop = revealOnScroll && isHomePage;
   const [scrollY, setScrollY] = useState(0);
   const [showDisconnectDialog, setShowDisconnectDialog] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const lenis = useLenis();
 
   useEffect(() => {
@@ -87,6 +80,21 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
     };
   }, [lenis, shouldHideOnTop]);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('nav') && activeDropdown) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeDropdown]);
+
   const isVisible = !shouldHideOnTop || scrollY > 40;
 
   const handleDisconnect = () => {
@@ -138,23 +146,106 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
           </span>
         </Link>
         <nav className="flex gap-3 text-sm text-slate-100/60 items-center">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
+          <Link
+            href="/"
+            className={cn(
+              "rounded-full px-3 py-1 transition",
+              pathname === "/"
+                ? "bg-arche-gold/20 text-arche-gold border border-arche-gold/30"
+                : "hover:bg-white/5 hover:text-white"
+            )}
+          >
+            Home
+          </Link>
+
+          <div className="relative">
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === "discover" ? null : "discover")}
               className={cn(
-                "rounded-full px-3 py-1 transition",
-                pathname === link.href
-                  ? "bg-white/10 text-slate-50"
-                  : "hover:bg-white/5 hover:text-slate-50"
+                "px-3 py-1 rounded-full text-sm transition-colors",
+                (pathname === "/explore" || pathname === "/marketplace")
+                  ? "bg-arche-gold/20 text-arche-gold border border-arche-gold/30"
+                  : "text-white/60 hover:text-white hover:bg-white/5"
               )}
             >
-              {link.label}
-            </Link>
-          ))}
-          
+              Discover
+            </button>
+            {activeDropdown === "discover" && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-[#0F213E]/95 backdrop-blur border border-white/10 rounded-xl shadow-lg z-50 overflow-hidden">
+                <Link
+                  href="/explore"
+                  className={cn(
+                    "block px-4 py-3 text-sm transition-colors hover:bg-white/5 border-b border-white/5",
+                    pathname === "/explore" ? "text-arche-gold bg-white/5" : "text-white/80"
+                  )}
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  Explore
+                </Link>
+                <Link
+                  href="/marketplace"
+                  className={cn(
+                    "block px-4 py-3 text-sm transition-colors hover:bg-white/5 border-b border-white/5 last:border-b-0",
+                    pathname === "/marketplace" ? "text-arche-gold bg-white/5" : "text-white/80"
+                  )}
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  Marketplace
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <div className="relative">
+            <button
+              onClick={() => setActiveDropdown(activeDropdown === "create" ? null : "create")}
+              className={cn(
+                "px-3 py-1 rounded-full text-sm transition-colors",
+                (pathname === "/studio" || pathname === "/collection" || pathname === "/profile")
+                  ? "bg-arche-gold/20 text-arche-gold border border-arche-gold/30"
+                  : "text-white/60 hover:text-white hover:bg-white/5"
+              )}
+            >
+              Create
+            </button>
+            {activeDropdown === "create" && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-[#0F213E]/95 backdrop-blur border border-white/10 rounded-xl shadow-lg z-50 overflow-hidden">
+                <Link
+                  href="/studio"
+                  className={cn(
+                    "block px-4 py-3 text-sm transition-colors hover:bg-white/5 border-b border-white/5",
+                    pathname === "/studio" ? "text-arche-gold bg-white/5" : "text-white/80"
+                  )}
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  Studio
+                </Link>
+                <Link
+                  href="/collection"
+                  className={cn(
+                    "block px-4 py-3 text-sm transition-colors hover:bg-white/5 border-b border-white/5",
+                    pathname === "/collection" ? "text-arche-gold bg-white/5" : "text-white/80"
+                  )}
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  Collection
+                </Link>
+                <Link
+                  href="/profile"
+                  className={cn(
+                    "block px-4 py-3 text-sm transition-colors hover:bg-white/5 last:border-b-0",
+                    pathname === "/profile" ? "text-arche-gold bg-white/5" : "text-white/80"
+                  )}
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  Profile
+                </Link>
+              </div>
+            )}
+          </div>
+
           {!account ? (
-             <button 
+             <button
                 onClick={connectWallet}
                 disabled={isConnecting}
                 className="ml-4 px-3 py-1 text-xs font-medium text-arche-gold border border-arche-gold/20 rounded-full hover:bg-arche-gold/10 transition-colors disabled:opacity-50"
@@ -162,8 +253,8 @@ export function SiteHeader({ revealOnScroll = false }: SiteHeaderProps) {
                 {isConnecting ? "Connecting..." : "Connect Wallet"}
              </button>
          ) : (
-             <button 
-                onClick={() => setShowDisconnectDialog(true)} 
+             <button
+                onClick={() => setShowDisconnectDialog(true)}
                 className="ml-4 text-xs text-arche-gold/80 font-mono border border-arche-gold/10 rounded-full px-3 py-1 bg-arche-gold/5 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all cursor-pointer"
                 title="Click to disconnect"
              >

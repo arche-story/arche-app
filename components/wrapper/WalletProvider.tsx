@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useWalletClient, usePublicClient } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
 import { Address, custom } from "viem";
@@ -9,6 +9,9 @@ import { Address, custom } from "viem";
 interface WalletContextType {
   account: Address | null;
   storyClient: StoryClient | null;
+  walletClient: any | null; // Wagmi wallet client for contract interactions
+  publicClient: any | null; // Wagmi public client for transaction receipts
+  isWalletClientLoading: boolean; // Whether wallet client is still initializing
   connectWallet: () => void;
   isConnecting: boolean;
   isReconnecting: boolean;
@@ -20,6 +23,9 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType>({
   account: null,
   storyClient: null,
+  walletClient: null,
+  publicClient: null,
+  isWalletClientLoading: false,
   connectWallet: () => {},
   isConnecting: false,
   isReconnecting: false,
@@ -34,8 +40,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const { address, isConnected, isReconnecting, status } = useAccount();
   const { connect, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
-  const { data: walletClient } = useWalletClient();
-  
+  const { data: walletClient, isLoading: isWalletClientLoading } = useWalletClient();
+  const publicClient = usePublicClient(); // Get public client
+
   const [storyClient, setStoryClient] = useState<StoryClient | null>(null);
   const [shouldBeConnected, setShouldBeConnected] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false); // Track if we've checked storage
@@ -96,10 +103,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }, [walletClient, isConnected]);
 
   return (
-    <WalletContext.Provider value={{ 
-        account: address || null, 
-        storyClient, 
-        connectWallet, 
+    <WalletContext.Provider value={{
+        account: address || null,
+        storyClient,
+        walletClient,
+        publicClient,
+        isWalletClientLoading,
+        connectWallet,
         isConnecting,
         isReconnecting,
         shouldBeConnected,
