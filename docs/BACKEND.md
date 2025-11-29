@@ -170,6 +170,14 @@ The backend follows a Next.js API routes pattern with:
 }
 ```
 
+**Output**:
+```json
+{
+  "success": true,
+  "listingId": "string"
+}
+```
+
 **Flow**:
 1. Validates asset exists and user is owner
 2. Creates `(:Listing)` node with unique ID
@@ -177,6 +185,46 @@ The backend follows a Next.js API routes pattern with:
 4. Creates `[:SELLS]` relationship (Listing -> IPAsset)
 5. Sets listing status to "ACTIVE"
 6. Returns success with listing ID
+
+#### `/my-listings/route.ts` - Get User's Listings
+**Purpose**: Retrieves all listings created by a specific user.
+
+**Method**: GET
+
+**Query Parameters**:
+- `userAddress`: Wallet address of the user
+
+**Output**:
+```json
+{
+  "listings": [
+    {
+      "listingId": "string",
+      "price": "string",
+      "currency": "string",
+      "status": "string",
+      "createdAt": "string",
+      "asset": {
+        "id": "string",
+        "title": "string",
+        "prompt": "string",
+        "imageUri": "string",
+        "name": "string"
+      },
+      "seller": {
+        "address": "string",
+        "username": "string"
+      }
+    }
+  ]
+}
+```
+
+**Flow**:
+1. Validates userAddress parameter
+2. Executes Cypher query to match user with their listed items
+3. Returns listings with associated asset and seller information
+4. Orders results by creation date (newest first)
 
 #### `/buy/route.ts` - Purchase Asset
 **Purpose**: Processes asset purchase and updates ownership.

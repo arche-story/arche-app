@@ -102,6 +102,41 @@ interface WalletContextType {
 ### Feature-Specific Hooks (e.g. `useProfile`, `useCollection`, etc.)
 **Purpose**: Handle data fetching and state management for specific features.
 
+### SWR Integration
+**Purpose**: Provides caching, deduplication, and automatic revalidation of API requests.
+
+**Key Features**:
+- Client-side caching with automatic revalidation
+- Request deduplication to minimize network requests
+- Error handling and retry mechanisms
+- Optimistic UI updates
+- Pagination support
+
+**Implementation Pattern**:
+```typescript
+const { data, error, isLoading, mutate } = useSWR(
+  key,           // Cache key (or null to disable)
+  fetcher,       // Async function returning data
+  options        // Configuration options
+);
+```
+
+**Usage Example**:
+```typescript
+const { data: items, isLoading, mutate } = useSWR(
+  account ? `user-${account}-assets-${activeTab}-${page}` : null,
+  async () => {
+    // Fetch data using service layer
+    return graphService.getUserAssets(account, status, page);
+  },
+  {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+    errorRetryCount: 3,
+  }
+);
+```
+
 ## Utility Functions (`lib/utils.ts`)
 
 ### `addWipTokenToMetaMask`

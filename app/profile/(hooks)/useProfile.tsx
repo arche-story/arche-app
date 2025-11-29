@@ -1,102 +1,92 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import useSWR from "swr";
 import { useWallet } from "@/components/wrapper/WalletProvider";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { toast } from "sonner";
-
-type Asset = {
-  id: string;
-  imageUri: string;
-  prompt: string;
-  createdAt: string;
-  txHash?: string;
-  name?: string;
-  title?: string; // Added title
-  label?: string;
-  status: string;
-  price?: number; // Added price for listings
-};
+import { IPAsset, MarketplaceListing } from "@/types";
+import { graphService, marketplaceService } from "@/services/apiService";
 
 export function useProfile() {
   const { account, connectWallet } = useWallet();
   const { profile, loading: profileLoading, updateProfile } = useUserProfile(account || undefined);
 
   const [activeTab, setActiveTab] = useState<"DRAFTS" | "COLLECTION" | "FAVORITES" | "MY_LISTINGS">("FAVORITES");
-  const [items, setItems] = useState<Asset[]>([]);
-  const [assetsLoading, setAssetsLoading] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-
-  // Pagination
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchAssets = useCallback(async () => {
-    if (!account) return;
+  // Reset page on tab change
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
 
-    setAssetsLoading(true);
-    try {
-      if (activeTab === 'MY_LISTINGS') {
-        // Fetch user's listings from marketplace
-        const res = await fetch(`/api/marketplace/my-listings?userAddress=${account}`);
-        const data = await res.json();
+  // SWR key based on account, tab, and page
+  const swrKey = account
+    ? [
+        activeTab,
+        account,
+        page,
+        activeTab === "MY_LISTINGS" ? "listings" : "assets"
+      ].join('-')
+    : null;
 
-        if (data.listings) {
-          // Transform listings to asset format
-          const transformedItems = data.listings.map((listing: any) => ({
+  // Fetch data based on active tab
+  const { data: items = [], error, isLoading, mutate } = useSWR(
+    swrKey,
+    async () => {
+      if (!account) return [];
+
+      try {
+        if (activeTab === 'MY_LISTINGS') {
+          // Fetch user's listings from marketplace
+          const listings = await marketplaceService.getUserListings(account);
+
+          // Transform listings to IPAsset format
+          return listings.map((listing: MarketplaceListing) => ({
             id: listing.asset.id,
-            imageUri: listing.asset.imageUri,
-            prompt: listing.asset.prompt,
+            imageUri: listing.asset.imageUri || "",
+            prompt: listing.asset.prompt || "",
             name: listing.asset.name,
             title: listing.asset.title,
             label: listing.asset.title || listing.asset.name || "Untitled Asset",
             createdAt: listing.createdAt,
             status: listing.status,
-            price: listing.price,  // Include price from listing
+            price: parseFloat(listing.price),
           }));
-          setItems(transformedItems);
-          // For listings, we don't have pagination from the API yet, so set totalPages to 1
-          setTotalPages(1);
         } else {
-          setItems([]);
-          setTotalPages(1);
-        }
-      } else {
-        let status = 'REGISTERED';
-        if (activeTab === 'DRAFTS') status = 'DRAFT';
-        if (activeTab === 'FAVORITES') status = 'FAVORITES';
+          let status: 'DRAFT' | 'REGISTERED' | 'FAVORITES' | undefined;
+          if (activeTab === 'DRAFTS') status = 'DRAFT';
+          if (activeTab === 'FAVORITES') status = 'FAVORITES';
 
-        const res = await fetch(
-          `/api/graph/user-assets?userAddress=${account}&status=${status}&page=${page}&limit=9`
-        );
-        const data = await res.json();
-
-        if (data.items) {
-            setItems(data.items);
-            setTotalPages(data.totalPages || 1);
+          // Fetch user's assets
+          const response = await graphService.getUserAssets(account, status, page, 9);
+          return response.items || [];
         }
+      } catch (err) {
+        console.error("Error fetching profile data:", err);
+        return [];
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setAssetsLoading(false);
+    },
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
     }
-  }, [account, activeTab, page]);
+  );
 
-  useEffect(() => {
-    if (account) {
-        fetchAssets();
-    }
-  }, [fetchAssets, account]);
+  // Determine total pages (this may need to come from the API response)
+  const totalPages = 1; // Placeholder - would need proper pagination data
 
-  // Reset page on tab change
-  useEffect(() => {
-      setPage(1);
-  }, [activeTab]);
+  const handleSaveProfile = async (data: { username?: string; bio?: string; avatarUri?: string }) => {
+    if (!account) return;
 
-  const handleSaveProfile = async (data: any) => {
-      await updateProfile(data);
+    try {
+      await updateProfile({ ...data, address: account });
       toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
+    }
   };
 
   return {
@@ -104,15 +94,17 @@ export function useProfile() {
     connectWallet,
     profile,
     profileLoading,
-    assetsLoading,
+    assetsLoading: isLoading,
     activeTab,
     setActiveTab,
-    items,
+    items: items as IPAsset[],
     isEditOpen,
     setIsEditOpen,
     handleSaveProfile,
     page,
     setPage,
-    totalPages
+    totalPages,
+    mutate,
+    error
   };
 }
